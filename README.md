@@ -10,16 +10,84 @@ Skill.
 
 ## Status
 
-Early bootstrap. What the repository contains today:
+The first data files are in the repository:
 
+- `data/chapters.json` - the five story chapters with their mandatory mission
+  counts, 91 story missions in total.
+- `data/missions/chapter-1.json` - the 22 mandatory missions of Chapter 1 in
+  story order.
 - `src/schema.ts` - plain types for `Source`, `Chapter` and `Mission`.
 - `src/validate.ts` - `validateDataset(kind, entries)`, which returns a list of
   problems instead of throwing, plus `Gta6DataError` for a bad dataset kind.
+- `src/data.ts` - `loadChapters()` and `loadMissions(chapterNumber?)`, which
+  read the JSON files from `data/`.
 - `src/index.ts` - public entry point.
-- `test/validate.test.ts` - tests, run with `npm test` on Node >= 22.18.
+- `test/validate.test.ts` and `test/data.test.ts` - tests, run with `npm test`
+  on Node >= 22.18.
 
-The mission data files, the MCP server and the Agent Skill are not in the
-repository yet.
+Missions for chapters 2 to 5, the 100% requirements, the cheat list, the MCP
+server and the Agent Skill are not in the repository yet.
+
+## Usage
+
+```ts
+import { loadChapters, loadMissions, validateDataset } from "gta6-companion";
+
+const chapters = loadChapters();
+const chapterOne = loadMissions(1);
+const problems = validateDataset(
+  "mission",
+  chapterOne,
+  chapters.map((chapter) => chapter.id),
+);
+```
+
+`loadMissions()` without an argument returns every mission file currently in
+the repository, in chapter order.
+
+## GTA 6 mission list
+
+| Chapter | Title | Mandatory missions |
+| --- | --- | --- |
+| 1 | Just Like Paradise | 22 |
+| 2 | Paradise Lost | 11 |
+| 3 | Tits Ass Drug Money | 26 |
+| 4 | Vice City, Baby | 25 |
+| 5 | Top of the World, Ma | 7 |
+| | Total | 91 |
+
+### Chapter 1 - Just Like Paradise
+
+Mission titles are spoilers. Skip the table if you would rather meet the story
+in game.
+
+| # | Mission | Id |
+| --- | --- | --- |
+| 1 | Prologue | `ch1-prologue` |
+| 2 | Gone Fishing | `ch1-gone-fishing` |
+| 3 | Gear Up | `ch1-gear-up` |
+| 4 | Just a Scratch | `ch1-just-a-scratch` |
+| 5 | Lab Fees | `ch1-lab-fees` |
+| 6 | Unwanted Attention | `ch1-unwanted-attention` |
+| 7 | Pipework | `ch1-pipework` |
+| 8 | Hey Arnold! | `ch1-hey-arnold` |
+| 9 | Island Dreams | `ch1-island-dreams` |
+| 10 | Feng Shui | `ch1-feng-shui` |
+| 11 | Coming Home | `ch1-coming-home` |
+| 12 | Buck Me | `ch1-buck-me` |
+| 13 | Clean Up After Donnie | `ch1-clean-up-after-donnie` |
+| 14 | Down to Earth | `ch1-down-to-earth` |
+| 15 | Clear Skies | `ch1-clear-skies` |
+| 16 | Day Release | `ch1-day-release` |
+| 17 | Swamped | `ch1-swamped` |
+| 18 | Don Gone | `ch1-don-gone` |
+| 19 | Recalibration | `ch1-recalibration` |
+| 20 | Tourist Trap | `ch1-tourist-trap` |
+| 21 | Home Sweet Home | `ch1-home-sweet-home` |
+| 22 | Discharge Time | `ch1-discharge-time` |
+
+Source for the chapter and Chapter 1 mission lists, checked on 2026-11-22:
+<https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/>
 
 ## Data policy
 

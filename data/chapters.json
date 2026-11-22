@@ -1,0 +1,62 @@
+[
+  {
+    "id": "ch1",
+    "number": 1,
+    "title": "Just Like Paradise",
+    "mandatoryMissions": 22,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch2",
+    "number": 2,
+    "title": "Paradise Lost",
+    "mandatoryMissions": 11,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3",
+    "number": 3,
+    "title": "Tits Ass Drug Money",
+    "mandatoryMissions": 26,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch4",
+    "number": 4,
+    "title": "Vice City, Baby",
+    "mandatoryMissions": 25,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch5",
+    "number": 5,
+    "title": "Top of the World, Ma",
+    "mandatoryMissions": 7,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  }
+]
