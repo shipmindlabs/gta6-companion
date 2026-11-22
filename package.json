@@ -1,0 +1,41 @@
+{
+  "name": "gta6-companion",
+  "version": "0.0.1",
+  "description": "Unofficial open data and tooling for Grand Theft Auto VI: chapters, story missions, 100% completion requirements and cheats.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Shipmind Labs <hello@shipmindlabs.com>",
+  "homepage": "https://shipmindlabs.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shipmindlabs/gta6-companion.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shipmindlabs/gta6-companion/issues"
+  },
+  "exports": "./src/index.ts",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "gta6",
+    "gta-6",
+    "gta-vi",
+    "grand-theft-auto-vi",
+    "gta-6-missions",
+    "gta-6-100-percent",
+    "gta-6-checklist",
+    "gta-6-tracker",
+    "gta-6-cheats",
+    "mcp-server",
+    "agent-skills"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.ts"
+  }
+}
