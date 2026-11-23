@@ -1,0 +1,93 @@
+[
+  {
+    "id": "ch5-bird-in-the-hand",
+    "chapterId": "ch5",
+    "order": 1,
+    "title": "Bird in the Hand",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch5-taking-liberties",
+    "chapterId": "ch5",
+    "order": 2,
+    "title": "Taking Liberties",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch5-vc-baby",
+    "chapterId": "ch5",
+    "order": 3,
+    "title": "VC Baby",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch5-doggie-bag",
+    "chapterId": "ch5",
+    "order": 4,
+    "title": "Doggie Bag",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch5-operation-savage-glory",
+    "chapterId": "ch5",
+    "order": 5,
+    "title": "Operation Savage Glory",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch5-protective-custody",
+    "chapterId": "ch5",
+    "order": 6,
+    "title": "Protective Custody",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch5-the-end-of-the-road",
+    "chapterId": "ch5",
+    "order": 7,
+    "title": "The End of the Road",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  }
+]

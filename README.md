@@ -10,7 +10,7 @@ Skill.
 
 ## Status
 
-The first data files are in the repository:
+The complete story mission list is in the repository:
 
 - `data/chapters.json` - the five story chapters with their mandatory mission
   counts, 91 story missions in total.
@@ -20,6 +20,10 @@ The first data files are in the repository:
   story order.
 - `data/missions/chapter-3.json` - the 26 mandatory missions of Chapter 3 in
   story order.
+- `data/missions/chapter-4.json` - the 25 mandatory missions of Chapter 4 in
+  story order.
+- `data/missions/chapter-5.json` - the 7 mandatory missions of Chapter 5 in
+  story order, ending the story.
 - `data/missions/optional.json` - optional missions that sit outside the
   mandatory counts, currently the two jobs from Billy's questline.
 - `src/schema.ts` - plain types for `Source`, `Chapter` and `Mission`.
@@ -31,8 +35,8 @@ The first data files are in the repository:
 - `test/validate.test.ts` and `test/data.test.ts` - tests, run with `npm test`
   on Node >= 22.18.
 
-Missions for chapters 4 and 5, the 100% requirements, the cheat list, the MCP
-server and the Agent Skill are not in the repository yet.
+The 100% requirements, the cheat list, the MCP server and the Agent Skill are
+not in the repository yet.
 
 ## Usage
 
@@ -40,17 +44,18 @@ server and the Agent Skill are not in the repository yet.
 import { loadChapters, loadMissions, validateDataset } from "gta6-companion";
 
 const chapters = loadChapters();
-const chapterThree = loadMissions(3);
+const wholeStory = loadMissions();
+const finale = loadMissions(5);
 const chapterTwoWithSideJobs = loadMissions(2, { includeOptional: true });
 const problems = validateDataset(
   "mission",
-  chapterThree,
+  wholeStory,
   chapters.map((chapter) => chapter.id),
 );
 ```
 
-`loadMissions()` without an argument returns every mission file currently in
-the repository, in chapter order. Optional missions are left out unless
+`loadMissions()` without an argument returns all 91 mandatory story missions in
+chapter and story order. Optional missions are left out unless
 `{ includeOptional: true }` is passed, so the mandatory counts in
 `data/chapters.json` always match what you get back.
 
@@ -69,9 +74,13 @@ The total of 91 counts mandatory story missions only; some guides also count
 Billy's two optional jobs, Thrillbillies and Twist Wrist, Smash, Grab, which is
 where the total of 93 comes from.
 
+The source below also states that GTA 6 has no mission replay at launch, so a
+finished story mission cannot be played again from the pause menu; a checklist
+is the only way to keep track of what you have already done.
+
 ### Chapter 1 - Just Like Paradise
 
-Mission titles are spoilers. Skip the table if you would rather meet the story
+Mission titles are spoilers. Skip the tables if you would rather meet the story
 in game.
 
 | # | Mission | Id |
@@ -153,7 +162,50 @@ Optional jobs from Billy's questline, available around Chapter 2:
 | 25 | Hidden Charges | `ch3-hidden-charges` |
 | 26 | The Cartel Heist | `ch3-the-cartel-heist` |
 
-Source for the chapter and mission lists, checked on 2026-11-22:
+### Chapter 4 - Vice City, Baby
+
+| # | Mission | Id |
+| --- | --- | --- |
+| 1 | Ocean Beach | `ch4-ocean-beach` |
+| 2 | Another Life | `ch4-another-life` |
+| 3 | Company Cars | `ch4-company-cars` |
+| 4 | Lawyer Up | `ch4-lawyer-up` |
+| 5 | Party Hard | `ch4-party-hard` |
+| 6 | Heavy Lifting | `ch4-heavy-lifting` |
+| 7 | Photo/Shoot | `ch4-photo-shoot` |
+| 8 | Making Gainz | `ch4-making-gainz` |
+| 9 | Watch It | `ch4-watch-it` |
+| 10 | Cash Injections | `ch4-cash-injections` |
+| 11 | Amateur Hour | `ch4-amateur-hour` |
+| 12 | Dirty Work | `ch4-dirty-work` |
+| 13 | Too Much Baggage | `ch4-too-much-baggage` |
+| 14 | Adventures in Babysitting | `ch4-adventures-in-babysitting` |
+| 15 | Fresh Evidence | `ch4-fresh-evidence` |
+| 16 | Power Play | `ch4-power-play` |
+| 17 | Child's Play | `ch4-childs-play` |
+| 18 | Headliners | `ch4-headliners` |
+| 19 | Close Surveillance | `ch4-close-surveillance` |
+| 20 | Delivery Method | `ch4-delivery-method` |
+| 21 | Team Building | `ch4-team-building` |
+| 22 | Fully Catered | `ch4-fully-catered` |
+| 23 | VCIA Takedown | `ch4-vcia-takedown` |
+| 24 | Sunset | `ch4-sunset` |
+| 25 | Starting From Zero | `ch4-starting-from-zero` |
+
+### Chapter 5 - Top of the World, Ma
+
+| # | Mission | Id |
+| --- | --- | --- |
+| 1 | Bird in the Hand | `ch5-bird-in-the-hand` |
+| 2 | Taking Liberties | `ch5-taking-liberties` |
+| 3 | VC Baby | `ch5-vc-baby` |
+| 4 | Doggie Bag | `ch5-doggie-bag` |
+| 5 | Operation Savage Glory | `ch5-operation-savage-glory` |
+| 6 | Protective Custody | `ch5-protective-custody` |
+| 7 | The End of the Road | `ch5-the-end-of-the-road` |
+
+Source for the chapter and mission lists and for the mission replay note,
+checked on 2026-11-22:
 <https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/>
 
 ## Data policy

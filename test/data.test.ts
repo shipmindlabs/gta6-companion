@@ -100,6 +100,64 @@ test("the chapter 3 count matches the number of mission entries", () => {
   assert.equal(chapterThree?.mandatoryMissions, loadMissions(3).length);
 });
 
+test("chapter 4 has exactly 25 mandatory missions ordered 1..25", () => {
+  const missions = loadMissions(4);
+
+  assert.equal(missions.length, 25);
+  assert.deepEqual(
+    missions.map((entry) => entry.order),
+    Array.from({ length: 25 }, (_, position) => position + 1),
+  );
+  assert.ok(missions.every((entry) => entry.chapterId === "ch4"));
+  assert.ok(missions.every((entry) => entry.optional === false));
+  assert.equal(missions[0].id, "ch4-ocean-beach");
+  assert.equal(missions[24].id, "ch4-starting-from-zero");
+});
+
+test("chapter 5 has exactly 7 mandatory missions ordered 1..7", () => {
+  const missions = loadMissions(5);
+
+  assert.equal(missions.length, 7);
+  assert.deepEqual(
+    missions.map((entry) => entry.order),
+    Array.from({ length: 7 }, (_, position) => position + 1),
+  );
+  assert.ok(missions.every((entry) => entry.chapterId === "ch5"));
+  assert.ok(missions.every((entry) => entry.optional === false));
+  assert.equal(missions[0].id, "ch5-bird-in-the-hand");
+});
+
+test("every chapter file holds exactly its mandatoryMissions entries", () => {
+  for (const chapter of loadChapters()) {
+    const missions = loadMissions(chapter.number);
+
+    assert.equal(missions.length, chapter.mandatoryMissions);
+    assert.ok(missions.every((entry) => entry.chapterId === chapter.id));
+    assert.ok(missions.every((entry) => entry.optional === false));
+    assert.deepEqual(
+      missions.map((entry) => entry.order),
+      Array.from({ length: chapter.mandatoryMissions }, (_, position) => position + 1),
+    );
+  }
+});
+
+test("the mission files hold 91 mandatory missions in total", () => {
+  const missions = loadMissions();
+
+  assert.equal(missions.length, 91);
+  assert.ok(missions.every((entry) => entry.optional === false));
+});
+
+test("the story ends with The End of the Road", () => {
+  const missions = loadMissions();
+  const last = missions[missions.length - 1];
+
+  assert.equal(last.title, "The End of the Road");
+  assert.equal(last.id, "ch5-the-end-of-the-road");
+  assert.equal(last.chapterId, "ch5");
+  assert.equal(last.order, 7);
+});
+
 test("mission ids stay unique across every chapter file loaded together", () => {
   const missions = loadMissions(undefined, { includeOptional: true });
   const ids = missions.map((entry) => entry.id);
@@ -147,6 +205,7 @@ test("mission titles stay plain ASCII, apostrophes included", () => {
   assert.ok(titles.includes("What's in the Bag?"));
   assert.ok(titles.includes("Girls' Trip"));
   assert.ok(titles.includes("Dealer's Choice"));
+  assert.ok(titles.includes("Child's Play"));
   for (const title of titles) {
     assert.match(title, /^[\x20-\x7e]+$/);
     assert.doesNotMatch(title, /[\u2018\u2019\u02bc]/);
@@ -155,7 +214,7 @@ test("mission titles stay plain ASCII, apostrophes included", () => {
 
 test("a chapter without mission data throws Gta6DataError", () => {
   assert.throws(
-    () => loadMissions(5),
+    () => loadMissions(6),
     (error: unknown) => error instanceof Gta6DataError && error.code === "unknown_chapter",
   );
 });
