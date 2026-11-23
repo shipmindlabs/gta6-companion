@@ -1,0 +1,145 @@
+[
+  {
+    "id": "ch2-whats-in-the-bag",
+    "chapterId": "ch2",
+    "order": 1,
+    "title": "What's in the Bag?",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch2-ambulance-chaser",
+    "chapterId": "ch2",
+    "order": 2,
+    "title": "Ambulance Chaser",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch2-just-moved-in",
+    "chapterId": "ch2",
+    "order": 3,
+    "title": "Just Moved In",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch2-girls-trip",
+    "chapterId": "ch2",
+    "order": 4,
+    "title": "Girls' Trip",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch2-moses",
+    "chapterId": "ch2",
+    "order": 5,
+    "title": "Moses",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch2-daily-driver",
+    "chapterId": "ch2",
+    "order": 6,
+    "title": "Daily Driver",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch2-slam-dunk",
+    "chapterId": "ch2",
+    "order": 7,
+    "title": "Slam Dunk",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch2-breakfast-run",
+    "chapterId": "ch2",
+    "order": 8,
+    "title": "Breakfast Run",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch2-coffee-break",
+    "chapterId": "ch2",
+    "order": 9,
+    "title": "Coffee Break",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch2-afternoon-delight",
+    "chapterId": "ch2",
+    "order": 10,
+    "title": "Afternoon Delight",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch2-checking-out",
+    "chapterId": "ch2",
+    "order": 11,
+    "title": "Checking Out",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  }
+]

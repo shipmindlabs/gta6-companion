@@ -18,5 +18,6 @@ export type Mission = {
   order: number;
   title: string;
   optional: boolean;
+  note?: string;
   sources: Source[];
 };

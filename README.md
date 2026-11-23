@@ -16,16 +16,20 @@ The first data files are in the repository:
   counts, 91 story missions in total.
 - `data/missions/chapter-1.json` - the 22 mandatory missions of Chapter 1 in
   story order.
+- `data/missions/chapter-2.json` - the 11 mandatory missions of Chapter 2 in
+  story order.
+- `data/missions/optional.json` - optional missions that sit outside the
+  mandatory counts, currently the two jobs from Billy's questline.
 - `src/schema.ts` - plain types for `Source`, `Chapter` and `Mission`.
 - `src/validate.ts` - `validateDataset(kind, entries)`, which returns a list of
   problems instead of throwing, plus `Gta6DataError` for a bad dataset kind.
-- `src/data.ts` - `loadChapters()` and `loadMissions(chapterNumber?)`, which
-  read the JSON files from `data/`.
+- `src/data.ts` - `loadChapters()` and `loadMissions(chapterNumber?, options?)`,
+  which read the JSON files from `data/`.
 - `src/index.ts` - public entry point.
 - `test/validate.test.ts` and `test/data.test.ts` - tests, run with `npm test`
   on Node >= 22.18.
 
-Missions for chapters 2 to 5, the 100% requirements, the cheat list, the MCP
+Missions for chapters 3 to 5, the 100% requirements, the cheat list, the MCP
 server and the Agent Skill are not in the repository yet.
 
 ## Usage
@@ -34,16 +38,19 @@ server and the Agent Skill are not in the repository yet.
 import { loadChapters, loadMissions, validateDataset } from "gta6-companion";
 
 const chapters = loadChapters();
-const chapterOne = loadMissions(1);
+const chapterTwo = loadMissions(2);
+const chapterTwoWithSideJobs = loadMissions(2, { includeOptional: true });
 const problems = validateDataset(
   "mission",
-  chapterOne,
+  chapterTwo,
   chapters.map((chapter) => chapter.id),
 );
 ```
 
 `loadMissions()` without an argument returns every mission file currently in
-the repository, in chapter order.
+the repository, in chapter order. Optional missions are left out unless
+`{ includeOptional: true }` is passed, so the mandatory counts in
+`data/chapters.json` always match what you get back.
 
 ## GTA 6 mission list
 
@@ -55,6 +62,10 @@ the repository, in chapter order.
 | 4 | Vice City, Baby | 25 |
 | 5 | Top of the World, Ma | 7 |
 | | Total | 91 |
+
+The total of 91 counts mandatory story missions only; some guides also count
+Billy's two optional jobs, Thrillbillies and Twist Wrist, Smash, Grab, which is
+where the total of 93 comes from.
 
 ### Chapter 1 - Just Like Paradise
 
@@ -86,7 +97,30 @@ in game.
 | 21 | Home Sweet Home | `ch1-home-sweet-home` |
 | 22 | Discharge Time | `ch1-discharge-time` |
 
-Source for the chapter and Chapter 1 mission lists, checked on 2026-11-22:
+### Chapter 2 - Paradise Lost
+
+| # | Mission | Id |
+| --- | --- | --- |
+| 1 | What's in the Bag? | `ch2-whats-in-the-bag` |
+| 2 | Ambulance Chaser | `ch2-ambulance-chaser` |
+| 3 | Just Moved In | `ch2-just-moved-in` |
+| 4 | Girls' Trip | `ch2-girls-trip` |
+| 5 | Moses | `ch2-moses` |
+| 6 | Daily Driver | `ch2-daily-driver` |
+| 7 | Slam Dunk | `ch2-slam-dunk` |
+| 8 | Breakfast Run | `ch2-breakfast-run` |
+| 9 | Coffee Break | `ch2-coffee-break` |
+| 10 | Afternoon Delight | `ch2-afternoon-delight` |
+| 11 | Checking Out | `ch2-checking-out` |
+
+Optional jobs from Billy's questline, available around Chapter 2:
+
+| Mission | Id |
+| --- | --- |
+| Thrillbillies | `ch2-thrillbillies` |
+| Twist Wrist, Smash, Grab | `ch2-twist-wrist-smash-grab` |
+
+Source for the chapter and mission lists, checked on 2026-11-22:
 <https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/>
 
 ## Data policy

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "ch2-thrillbillies",
+    "chapterId": "ch2",
+    "order": 12,
+    "title": "Thrillbillies",
+    "optional": true,
+    "note": "Optional job from Billy's questline, available around Chapter 2. Some guides count it as a story mission, which is why totals of 93 missions appear.",
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch2-twist-wrist-smash-grab",
+    "chapterId": "ch2",
+    "order": 13,
+    "title": "Twist Wrist, Smash, Grab",
+    "optional": true,
+    "note": "Optional job from Billy's questline, available around Chapter 2. Some guides count it as a story mission, which is why totals of 93 missions appear.",
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  }
+]
