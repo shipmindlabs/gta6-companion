@@ -1,0 +1,340 @@
+[
+  {
+    "id": "ch3-welcome-to-vice-city",
+    "chapterId": "ch3",
+    "order": 1,
+    "title": "Welcome to Vice City",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-dealers-choice",
+    "chapterId": "ch3",
+    "order": 2,
+    "title": "Dealer's Choice",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-meet-the-heders",
+    "chapterId": "ch3",
+    "order": 3,
+    "title": "Meet the Heders",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-dubious-provenance",
+    "chapterId": "ch3",
+    "order": 4,
+    "title": "Dubious Provenance",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-mami-knows-best",
+    "chapterId": "ch3",
+    "order": 5,
+    "title": "Mami Knows Best",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-south-leonida-real-estate",
+    "chapterId": "ch3",
+    "order": 6,
+    "title": "South Leonida Real Estate",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-tyrone",
+    "chapterId": "ch3",
+    "order": 7,
+    "title": "Tyrone",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-here-kitty-kitty",
+    "chapterId": "ch3",
+    "order": 8,
+    "title": "Here, Kitty Kitty",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-car-service",
+    "chapterId": "ch3",
+    "order": 9,
+    "title": "Car Service",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-top-billing",
+    "chapterId": "ch3",
+    "order": 10,
+    "title": "Top Billing",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-boobie-time",
+    "chapterId": "ch3",
+    "order": 11,
+    "title": "Boobie Time",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-first-impressions",
+    "chapterId": "ch3",
+    "order": 12,
+    "title": "First Impressions",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-caught-slipping",
+    "chapterId": "ch3",
+    "order": 13,
+    "title": "Caught Slipping",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-crosstown-traffic",
+    "chapterId": "ch3",
+    "order": 14,
+    "title": "Crosstown Traffic",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-credit-check",
+    "chapterId": "ch3",
+    "order": 15,
+    "title": "Credit Check",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-steal-the-zorrusso-for-randy",
+    "chapterId": "ch3",
+    "order": 16,
+    "title": "Steal the Zorrusso for Randy",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-sinfrontera-national-bank",
+    "chapterId": "ch3",
+    "order": 17,
+    "title": "Sinfrontera National Bank",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-security-expert",
+    "chapterId": "ch3",
+    "order": 18,
+    "title": "Security Expert",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-ride-or-die",
+    "chapterId": "ch3",
+    "order": 19,
+    "title": "Ride or Die",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-company-property",
+    "chapterId": "ch3",
+    "order": 20,
+    "title": "Company Property",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-the-missing-link",
+    "chapterId": "ch3",
+    "order": 21,
+    "title": "The Missing Link",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-safe-word",
+    "chapterId": "ch3",
+    "order": 22,
+    "title": "Safe Word",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-cooties",
+    "chapterId": "ch3",
+    "order": 23,
+    "title": "Cooties",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-bricked-up",
+    "chapterId": "ch3",
+    "order": 24,
+    "title": "Bricked Up",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-hidden-charges",
+    "chapterId": "ch3",
+    "order": 25,
+    "title": "Hidden Charges",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  },
+  {
+    "id": "ch3-the-cartel-heist",
+    "chapterId": "ch3",
+    "order": 26,
+    "title": "The Cartel Heist",
+    "optional": false,
+    "sources": [
+      {
+        "url": "https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/",
+        "checkedOn": "2026-11-22"
+      }
+    ]
+  }
+]

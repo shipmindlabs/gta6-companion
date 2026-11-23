@@ -18,6 +18,8 @@ The first data files are in the repository:
   story order.
 - `data/missions/chapter-2.json` - the 11 mandatory missions of Chapter 2 in
   story order.
+- `data/missions/chapter-3.json` - the 26 mandatory missions of Chapter 3 in
+  story order.
 - `data/missions/optional.json` - optional missions that sit outside the
   mandatory counts, currently the two jobs from Billy's questline.
 - `src/schema.ts` - plain types for `Source`, `Chapter` and `Mission`.
@@ -29,7 +31,7 @@ The first data files are in the repository:
 - `test/validate.test.ts` and `test/data.test.ts` - tests, run with `npm test`
   on Node >= 22.18.
 
-Missions for chapters 3 to 5, the 100% requirements, the cheat list, the MCP
+Missions for chapters 4 and 5, the 100% requirements, the cheat list, the MCP
 server and the Agent Skill are not in the repository yet.
 
 ## Usage
@@ -38,11 +40,11 @@ server and the Agent Skill are not in the repository yet.
 import { loadChapters, loadMissions, validateDataset } from "gta6-companion";
 
 const chapters = loadChapters();
-const chapterTwo = loadMissions(2);
+const chapterThree = loadMissions(3);
 const chapterTwoWithSideJobs = loadMissions(2, { includeOptional: true });
 const problems = validateDataset(
   "mission",
-  chapterTwo,
+  chapterThree,
   chapters.map((chapter) => chapter.id),
 );
 ```
@@ -119,6 +121,37 @@ Optional jobs from Billy's questline, available around Chapter 2:
 | --- | --- |
 | Thrillbillies | `ch2-thrillbillies` |
 | Twist Wrist, Smash, Grab | `ch2-twist-wrist-smash-grab` |
+
+### Chapter 3 - Tits Ass Drug Money
+
+| # | Mission | Id |
+| --- | --- | --- |
+| 1 | Welcome to Vice City | `ch3-welcome-to-vice-city` |
+| 2 | Dealer's Choice | `ch3-dealers-choice` |
+| 3 | Meet the Heders | `ch3-meet-the-heders` |
+| 4 | Dubious Provenance | `ch3-dubious-provenance` |
+| 5 | Mami Knows Best | `ch3-mami-knows-best` |
+| 6 | South Leonida Real Estate | `ch3-south-leonida-real-estate` |
+| 7 | Tyrone | `ch3-tyrone` |
+| 8 | Here, Kitty Kitty | `ch3-here-kitty-kitty` |
+| 9 | Car Service | `ch3-car-service` |
+| 10 | Top Billing | `ch3-top-billing` |
+| 11 | Boobie Time | `ch3-boobie-time` |
+| 12 | First Impressions | `ch3-first-impressions` |
+| 13 | Caught Slipping | `ch3-caught-slipping` |
+| 14 | Crosstown Traffic | `ch3-crosstown-traffic` |
+| 15 | Credit Check | `ch3-credit-check` |
+| 16 | Steal the Zorrusso for Randy | `ch3-steal-the-zorrusso-for-randy` |
+| 17 | Sinfrontera National Bank | `ch3-sinfrontera-national-bank` |
+| 18 | Security Expert | `ch3-security-expert` |
+| 19 | Ride or Die | `ch3-ride-or-die` |
+| 20 | Company Property | `ch3-company-property` |
+| 21 | The Missing Link | `ch3-the-missing-link` |
+| 22 | Safe Word | `ch3-safe-word` |
+| 23 | Cooties | `ch3-cooties` |
+| 24 | Bricked Up | `ch3-bricked-up` |
+| 25 | Hidden Charges | `ch3-hidden-charges` |
+| 26 | The Cartel Heist | `ch3-the-cartel-heist` |
 
 Source for the chapter and mission lists, checked on 2026-11-22:
 <https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/>

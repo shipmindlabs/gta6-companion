@@ -80,6 +80,33 @@ test("the chapter 2 count matches the number of mission entries", () => {
   assert.equal(chapterTwo?.mandatoryMissions, loadMissions(2).length);
 });
 
+test("chapter 3 has exactly 26 mandatory missions ordered 1..26", () => {
+  const missions = loadMissions(3);
+
+  assert.equal(missions.length, 26);
+  assert.deepEqual(
+    missions.map((entry) => entry.order),
+    Array.from({ length: 26 }, (_, position) => position + 1),
+  );
+  assert.ok(missions.every((entry) => entry.chapterId === "ch3"));
+  assert.ok(missions.every((entry) => entry.optional === false));
+  assert.equal(missions[0].id, "ch3-welcome-to-vice-city");
+  assert.equal(missions[25].id, "ch3-the-cartel-heist");
+});
+
+test("the chapter 3 count matches the number of mission entries", () => {
+  const chapterThree = loadChapters().find((entry) => entry.number === 3);
+
+  assert.equal(chapterThree?.mandatoryMissions, loadMissions(3).length);
+});
+
+test("mission ids stay unique across every chapter file loaded together", () => {
+  const missions = loadMissions(undefined, { includeOptional: true });
+  const ids = missions.map((entry) => entry.id);
+
+  assert.equal(new Set(ids).size, ids.length);
+});
+
 test("optional missions are left out unless they are asked for", () => {
   const withOptional = loadMissions(2, { includeOptional: true });
 
@@ -119,6 +146,7 @@ test("mission titles stay plain ASCII, apostrophes included", () => {
 
   assert.ok(titles.includes("What's in the Bag?"));
   assert.ok(titles.includes("Girls' Trip"));
+  assert.ok(titles.includes("Dealer's Choice"));
   for (const title of titles) {
     assert.match(title, /^[\x20-\x7e]+$/);
     assert.doesNotMatch(title, /[\u2018\u2019\u02bc]/);
