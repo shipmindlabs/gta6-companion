@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import type { Chapter, Mission } from "../src/schema.ts";
+import type { Chapter, Mission, Requirement } from "../src/schema.ts";
 import { Gta6DataError, validateDataset } from "../src/validate.ts";
 
 function chapter(overrides: Partial<Chapter> = {}): Chapter {
@@ -23,6 +23,20 @@ function mission(overrides: Partial<Mission> = {}): Mission {
     title: "First Contact",
     optional: false,
     sources: [{ url: "https://example.com/gta6/missions", checkedOn: "2026-11-22" }],
+    ...overrides,
+  };
+}
+
+function requirement(overrides: Partial<Requirement> = {}): Requirement {
+  return {
+    id: "meditation-spots",
+    category: "collectibles",
+    title: "Meditation spots",
+    needed: 15,
+    total: 18,
+    unit: "spots",
+    strict: false,
+    sources: [{ url: "https://example.com/gta6/completion", checkedOn: "2026-11-22" }],
     ...overrides,
   };
 }
@@ -96,6 +110,65 @@ test("a mission must reference an existing chapter", () => {
   assert.equal(problems.length, 1);
   assert.equal(problems[0].code, "unknown_chapter");
   assert.match(problems[0].message, /leonida-keys/);
+});
+
+test("a valid requirement has no problems", () => {
+  assert.deepEqual(validateDataset("requirement", [requirement()]), []);
+});
+
+test("a requirement that needs more than the total is refused", () => {
+  const problems = validateDataset("requirement", [requirement({ needed: 20, total: 18 })]);
+
+  assert.equal(problems.length, 1);
+  assert.equal(problems[0].code, "needed_over_total");
+  assert.equal(problems[0].field, "needed");
+  assert.equal(problems[0].entryId, "meditation-spots");
+});
+
+test("a negative count is refused", () => {
+  const problems = validateDataset("requirement", [requirement({ needed: -1 })]);
+
+  assert.equal(problems.length, 1);
+  assert.equal(problems[0].code, "invalid_number");
+  assert.equal(problems[0].field, "needed");
+
+  const negativeTotal = validateDataset("requirement", [requirement({ total: -18 })]);
+  assert.ok(negativeTotal.some((entry) => entry.code === "invalid_number" && entry.field === "total"));
+});
+
+test("a requirement without a reported total is accepted", () => {
+  assert.deepEqual(
+    validateDataset("requirement", [
+      requirement({ id: "waink-location-scans", needed: 100, total: null, unit: "scans" }),
+    ]),
+    [],
+  );
+});
+
+test("strict must say whether needed equals total", () => {
+  const missing = validateDataset("requirement", [requirement({ needed: 18, total: 18 })]);
+  assert.equal(missing.length, 1);
+  assert.equal(missing[0].code, "inconsistent_strict");
+  assert.equal(missing[0].field, "strict");
+
+  const claimed = validateDataset("requirement", [requirement({ strict: true })]);
+  assert.equal(claimed.length, 1);
+  assert.equal(claimed[0].code, "inconsistent_strict");
+
+  assert.deepEqual(
+    validateDataset("requirement", [requirement({ needed: 18, total: 18, strict: true })]),
+    [],
+  );
+});
+
+test("an empty requirement category or unit is refused", () => {
+  const problems = validateDataset("requirement", [requirement({ category: " ", unit: "" })]);
+
+  assert.deepEqual(
+    problems.map((entry) => entry.field).sort(),
+    ["category", "unit"],
+  );
+  assert.ok(problems.every((entry) => entry.code === "empty_field"));
 });
 
 test("an unknown dataset kind throws Gta6DataError with a code", () => {

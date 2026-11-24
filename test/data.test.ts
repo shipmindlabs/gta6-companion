@@ -1,8 +1,28 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { loadChapters, loadMissions } from "../src/data.ts";
+import { loadChapters, loadMissions, loadRequirements, loadRequirementSet } from "../src/data.ts";
 import { Gta6DataError, validateDataset } from "../src/validate.ts";
+
+const ALL_OR_NOTHING = [
+  "underwater-discoveries",
+  "unique-playlists",
+  "gang-operations",
+  "bank-jobs",
+  "payday-loan-jobs",
+  "vaults",
+  "shooting-range-gold-medals",
+  "drone-time-trials",
+  "brets-target-decks",
+];
+
+const WITHOUT_TOTAL = [
+  "waink-location-scans",
+  "fenced-narcotics",
+  "fenced-jewellery",
+  "fenced-marked-bills",
+  "fenced-vehicles",
+];
 
 test("the chapter dataset is valid", () => {
   assert.deepEqual(validateDataset("chapter", loadChapters()), []);
@@ -217,4 +237,67 @@ test("a chapter without mission data throws Gta6DataError", () => {
     () => loadMissions(6),
     (error: unknown) => error instanceof Gta6DataError && error.code === "unknown_chapter",
   );
+});
+
+test("the requirement dataset is valid", () => {
+  assert.deepEqual(validateDataset("requirement", loadRequirements()), []);
+});
+
+test("the requirement file says it is still incomplete", () => {
+  const set = loadRequirementSet();
+
+  assert.equal(set.complete, false);
+  assert.match(set.note, /35/);
+  assert.ok(set.note.includes(String(set.requirements.length)));
+  assert.deepEqual(set.requirements, loadRequirements());
+});
+
+test("every all-or-nothing requirement is marked strict", () => {
+  const requirements = loadRequirements();
+
+  assert.deepEqual(
+    requirements.filter((entry) => entry.strict).map((entry) => entry.id),
+    ALL_OR_NOTHING,
+  );
+  assert.ok(
+    requirements
+      .filter((entry) => entry.strict)
+      .every((entry) => entry.needed === entry.total),
+  );
+  assert.ok(
+    requirements
+      .filter((entry) => !entry.strict)
+      .every((entry) => entry.total === null || entry.needed < entry.total),
+  );
+});
+
+test("a requirement without a reported total is kept as null", () => {
+  const requirements = loadRequirements();
+
+  assert.deepEqual(
+    requirements.filter((entry) => entry.total === null).map((entry) => entry.id),
+    WITHOUT_TOTAL,
+  );
+  assert.deepEqual(validateDataset("requirement", requirements), []);
+});
+
+test("fencing requirements are counted in us dollars", () => {
+  const fencing = loadRequirements().filter((entry) => entry.category === "fencing");
+
+  assert.equal(fencing.length, 4);
+  assert.ok(fencing.every((entry) => entry.unit === "usd"));
+  assert.ok(fencing.every((entry) => entry.needed >= 100000));
+});
+
+test("every requirement cites both completion guides", () => {
+  for (const entry of loadRequirements()) {
+    assert.deepEqual(
+      entry.sources.map((source) => source.url),
+      [
+        "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist",
+        "https://gtaside.com/tips/gta6/100-percent-completion/",
+      ],
+    );
+    assert.ok(entry.sources.every((source) => source.checkedOn === "2026-11-22"));
+  }
 });

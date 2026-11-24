@@ -10,7 +10,8 @@ Skill.
 
 ## Status
 
-The complete story mission list is in the repository:
+The complete story mission list and a first pass at the 100% requirements are in
+the repository:
 
 - `data/chapters.json` - the five story chapters with their mandatory mission
   counts, 91 story missions in total.
@@ -26,22 +27,31 @@ The complete story mission list is in the repository:
   story order, ending the story.
 - `data/missions/optional.json` - optional missions that sit outside the
   mandatory counts, currently the two jobs from Billy's questline.
-- `src/schema.ts` - plain types for `Source`, `Chapter` and `Mission`.
+- `data/requirements.json` - the 100% completion requirements cross-checked so
+  far, with a `complete: false` flag while entries are missing.
+- `src/schema.ts` - plain types for `Source`, `Chapter`, `Mission`,
+  `Requirement` and `RequirementSet`.
 - `src/validate.ts` - `validateDataset(kind, entries)`, which returns a list of
   problems instead of throwing, plus `Gta6DataError` for a bad dataset kind.
-- `src/data.ts` - `loadChapters()` and `loadMissions(chapterNumber?, options?)`,
-  which read the JSON files from `data/`.
+- `src/data.ts` - `loadChapters()`, `loadMissions(chapterNumber?, options?)`,
+  `loadRequirements()` and `loadRequirementSet()`, which read the JSON files
+  from `data/`.
 - `src/index.ts` - public entry point.
 - `test/validate.test.ts` and `test/data.test.ts` - tests, run with `npm test`
   on Node >= 22.18.
 
-The 100% requirements, the cheat list, the MCP server and the Agent Skill are
-not in the repository yet.
+The cheat list, the MCP server and the Agent Skill are not in the repository
+yet.
 
 ## Usage
 
 ```ts
-import { loadChapters, loadMissions, validateDataset } from "gta6-companion";
+import {
+  loadChapters,
+  loadMissions,
+  loadRequirements,
+  validateDataset,
+} from "gta6-companion";
 
 const chapters = loadChapters();
 const wholeStory = loadMissions();
@@ -52,12 +62,20 @@ const problems = validateDataset(
   wholeStory,
   chapters.map((chapter) => chapter.id),
 );
+
+const requirements = loadRequirements();
+const allOrNothing = requirements.filter((entry) => entry.strict);
 ```
 
 `loadMissions()` without an argument returns all 91 mandatory story missions in
 chapter and story order. Optional missions are left out unless
 `{ includeOptional: true }` is passed, so the mandatory counts in
 `data/chapters.json` always match what you get back.
+
+A requirement holds `needed` and `total` counts. `strict` is true when `needed`
+equals `total`, so the requirement is all or nothing; `total` is `null` when no
+total is reported for it. `loadRequirementSet()` returns the same entries plus
+the `complete` flag and the note about what is still missing.
 
 ## GTA 6 mission list
 
@@ -207,6 +225,48 @@ Optional jobs from Billy's questline, available around Chapter 2:
 Source for the chapter and mission lists and for the mission replay note,
 checked on 2026-11-22:
 <https://www.g2a.com/news/gta-6-news/gta-6-mission-and-chapter-list/>
+
+## GTA 6 100% completion requirements
+
+This table is generated from `data/requirements.json`. "All or nothing" marks
+the requirements where `needed` equals `total`, so nothing can be skipped. A
+total of "unknown" means the guides report what you need without reporting how
+much exists in the game.
+
+| Requirement | Category | Needed | Total | Unit | All or nothing |
+| --- | --- | --- | --- | --- | --- |
+| Card sets | collectibles | 15 | 18 | sets | no |
+| Kenton treasure sets | collectibles | 5 | 7 | sets | no |
+| Underwater discoveries | collectibles | 33 | 33 | discoveries | yes |
+| WAiNK location scans | collectibles | 100 | unknown | scans | no |
+| Magazines, books and comics | collectibles | 30 | 34 | items | no |
+| Meditation spots | collectibles | 15 | 18 | spots | no |
+| Cocaine flamingos | collectibles | 100 | 125 | flamingos | no |
+| Discovered styles | collections | 70 | 79 | styles | no |
+| Unique playlists | collections | 2 | 2 | playlists | yes |
+| Base-model vehicles scanned | collections | 200 | 277 | vehicles | no |
+| Standard-issue weapons discovered | collections | 50 | 66 | weapons | no |
+| Animals studied | collections | 100 | 255 | animals | no |
+| Gang operations | crime | 39 | 39 | operations | yes |
+| Bank jobs | crime | 22 | 22 | jobs | yes |
+| Payday loan jobs | crime | 7 | 7 | jobs | yes |
+| Vaults | crime | 8 | 8 | vaults | yes |
+| Shooting range gold medals | activities | 42 | 42 | medals | yes |
+| Drone time trials | activities | 42 | 42 | trials | yes |
+| Bret's target decks | activities | 15 | 15 | decks | yes |
+| Fenced narcotics | fencing | 100000 | unknown | usd | no |
+| Fenced jewellery | fencing | 100000 | unknown | usd | no |
+| Fenced marked bills | fencing | 250000 | unknown | usd | no |
+| Fenced vehicles | fencing | 200000 | unknown | usd | no |
+
+The list is incomplete on purpose: launch guides count 35 requirements for 100%
+completion, and `data/requirements.json` holds the 23 entries cross-checked
+against both sources so far, which is why the file carries `complete: false`.
+The remaining entries are left out until they can be checked, never guessed.
+
+Sources for the requirements, both checked on 2026-11-22:
+<https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist> and
+<https://gtaside.com/tips/gta6/100-percent-completion/>
 
 ## Data policy
 
