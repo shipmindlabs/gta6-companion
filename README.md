@@ -36,9 +36,12 @@ the repository:
 - `src/data.ts` - `loadChapters()`, `loadMissions(chapterNumber?, options?)`,
   `loadRequirements()` and `loadRequirementSet()`, which read the JSON files
   from `data/`.
+- `src/progress.ts` - the progress document and pure functions over it:
+  `emptyProgress()`, `markMission()`, `unmarkMission()`, `setCount()`,
+  `summarize()` and `whatsLeft()`.
 - `src/index.ts` - public entry point.
-- `test/validate.test.ts` and `test/data.test.ts` - tests, run with `npm test`
-  on Node >= 22.18.
+- `test/validate.test.ts`, `test/data.test.ts` and `test/progress.test.ts` -
+  tests, run with `npm test` on Node >= 22.18.
 
 The cheat list, the MCP server and the Agent Skill are not in the repository
 yet.
@@ -267,6 +270,80 @@ The remaining entries are left out until they can be checked, never guessed.
 Sources for the requirements, both checked on 2026-11-22:
 <https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist> and
 <https://gtaside.com/tips/gta6/100-percent-completion/>
+
+## GTA 6 progress tracker
+
+`src/progress.ts` holds the progress document and pure functions over it. It
+reads and writes nothing, so you keep the document wherever you like and pass
+it back in; the repository ignores `progress.local.json` if you want to keep one
+next to the code.
+
+```json
+{
+  "version": 1,
+  "updatedAt": "2026-11-24T18:20:00.000Z",
+  "missions": {
+    "ch1-prologue": "2026-11-23T20:10:00.000Z",
+    "ch1-gone-fishing": "2026-11-24T18:20:00.000Z"
+  },
+  "counts": {
+    "card-sets": 9,
+    "vaults": 8
+  }
+}
+```
+
+- `version` is `1`.
+- `updatedAt` and the mission values are ISO timestamps. A mission key means the
+  mission is done; marking it again keeps the first timestamp.
+- `missions` keys are mission ids from `data/missions/`. Optional missions can be
+  marked, but only mandatory missions count toward the story total.
+- `counts` maps requirement ids from `data/requirements.json` to how many you
+  have. A requirement that is not in `counts` counts as 0.
+
+```ts
+import {
+  emptyProgress,
+  loadChapters,
+  loadMissions,
+  loadRequirements,
+  markMission,
+  setCount,
+  summarize,
+  whatsLeft,
+} from "gta6-companion";
+
+const data = {
+  chapters: loadChapters(),
+  missions: loadMissions(),
+  requirements: loadRequirements(),
+};
+
+let progress = emptyProgress();
+progress = markMission(progress, "ch1-prologue");
+progress = setCount(progress, "vaults", 8, data);
+
+const summary = summarize(progress, data);
+summary.story; // { done: 1, total: 91, percent: 1 }
+const left = whatsLeft(progress, data);
+left.nextMission?.id; // "ch1-gone-fishing"
+```
+
+`markMission()`, `unmarkMission()` and `setCount()` return a new document and
+take the timestamp to record as their last argument, which defaults to now.
+`setCount()` also takes the dataset so it can refuse an unknown requirement id
+(`Gta6DataError` with code `unknown_id`) as well as a negative or fractional
+count (code `invalid_count`).
+
+`summarize()` returns story `{done, total, percent}`, a `{done, total}` entry per
+chapter, a `{have, needed, remaining, met}` entry per requirement and
+`overall {metRequirements, totalRequirements}`. A count above `needed` is met
+with `remaining` 0. Percentages are integers, floored, and never reach 100 while
+a mission is missing: 90 of 91 missions is 98 percent.
+
+`whatsLeft()` returns the next unfinished mission in story order, or `null` once
+the story is done, plus every unmet requirement with the smallest `remaining`
+first.
 
 ## Data policy
 
