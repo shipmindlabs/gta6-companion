@@ -1,6 +1,6 @@
-import type { Chapter, Mission, Source } from "./schema.ts";
+import type { Chapter, Mission, Requirement, Source } from "./schema.ts";
 
-export type DatasetKind = "chapter" | "mission";
+export type DatasetKind = "chapter" | "mission" | "requirement";
 
 export type Problem = {
   code: string;
@@ -22,6 +22,7 @@ export class Gta6DataError extends Error {
 
 const KEBAB_CASE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
+const KINDS = new Set<string>(["chapter", "mission", "requirement"]);
 
 function isCalendarDate(value: string): boolean {
   const parts = ISO_DATE.exec(value);
@@ -159,6 +160,49 @@ function checkSources(
   });
 }
 
+function checkRequirement(
+  requirement: Requirement,
+  index: number,
+  entryId: string,
+  problems: Problem[],
+): void {
+  checkText(requirement.category, index, entryId, "category", problems);
+  checkText(requirement.unit, index, entryId, "unit", problems);
+  checkCount(requirement.needed, index, entryId, "needed", 0, problems);
+
+  const needed: unknown = requirement.needed;
+  const total: unknown = requirement.total;
+  if (total !== null) {
+    checkCount(total, index, entryId, "total", 0, problems);
+  }
+
+  const bothCounts = Number.isInteger(needed) && Number.isInteger(total);
+  if (bothCounts && Number(needed) > Number(total)) {
+    problems.push(
+      problem(
+        "needed_over_total",
+        index,
+        entryId,
+        "needed",
+        `needed ${String(needed)} is higher than total ${String(total)}`,
+      ),
+    );
+  }
+
+  const allOrNothing = bothCounts && Number(needed) === Number(total);
+  if (requirement.strict !== allOrNothing) {
+    problems.push(
+      problem(
+        "inconsistent_strict",
+        index,
+        entryId,
+        "strict",
+        `strict must be ${String(allOrNothing)} when needed is ${String(needed)} and total is ${String(total)}`,
+      ),
+    );
+  }
+}
+
 export function validateDataset(kind: "chapter", entries: readonly Chapter[]): Problem[];
 export function validateDataset(
   kind: "mission",
@@ -166,11 +210,15 @@ export function validateDataset(
   chapterIds?: readonly string[],
 ): Problem[];
 export function validateDataset(
+  kind: "requirement",
+  entries: readonly Requirement[],
+): Problem[];
+export function validateDataset(
   kind: DatasetKind,
-  entries: readonly (Chapter | Mission)[],
+  entries: readonly (Chapter | Mission | Requirement)[],
   chapterIds: readonly string[] = [],
 ): Problem[] {
-  if (kind !== "chapter" && kind !== "mission") {
+  if (!KINDS.has(kind)) {
     throw new Gta6DataError(`unknown dataset kind: ${String(kind)}`, "unknown_kind");
   }
 
@@ -200,6 +248,11 @@ export function validateDataset(
       const chapter = entry as Chapter;
       checkCount(chapter.number, index, entryId, "number", 1, problems);
       checkCount(chapter.mandatoryMissions, index, entryId, "mandatoryMissions", 0, problems);
+      return;
+    }
+
+    if (kind === "requirement") {
+      checkRequirement(entry as Requirement, index, entryId, problems);
       return;
     }
 

@@ -1,0 +1,305 @@
+{
+  "complete": false,
+  "note": "Launch guides list 35 requirements for 100% completion. This file holds the 23 entries cross-checked against both sources so far; the rest are left out until they can be checked, never guessed.",
+  "requirements": [
+    {
+      "id": "card-sets",
+      "category": "collectibles",
+      "title": "Card sets",
+      "needed": 15,
+      "total": 18,
+      "unit": "sets",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "kenton-treasure-sets",
+      "category": "collectibles",
+      "title": "Kenton treasure sets",
+      "needed": 5,
+      "total": 7,
+      "unit": "sets",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "underwater-discoveries",
+      "category": "collectibles",
+      "title": "Underwater discoveries",
+      "needed": 33,
+      "total": 33,
+      "unit": "discoveries",
+      "strict": true,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "waink-location-scans",
+      "category": "collectibles",
+      "title": "WAiNK location scans",
+      "needed": 100,
+      "total": null,
+      "unit": "scans",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "magazines-books-and-comics",
+      "category": "collectibles",
+      "title": "Magazines, books and comics",
+      "needed": 30,
+      "total": 34,
+      "unit": "items",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "meditation-spots",
+      "category": "collectibles",
+      "title": "Meditation spots",
+      "needed": 15,
+      "total": 18,
+      "unit": "spots",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "cocaine-flamingos",
+      "category": "collectibles",
+      "title": "Cocaine flamingos",
+      "needed": 100,
+      "total": 125,
+      "unit": "flamingos",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "discovered-styles",
+      "category": "collections",
+      "title": "Discovered styles",
+      "needed": 70,
+      "total": 79,
+      "unit": "styles",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "unique-playlists",
+      "category": "collections",
+      "title": "Unique playlists",
+      "needed": 2,
+      "total": 2,
+      "unit": "playlists",
+      "strict": true,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "base-model-vehicles-scanned",
+      "category": "collections",
+      "title": "Base-model vehicles scanned",
+      "needed": 200,
+      "total": 277,
+      "unit": "vehicles",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "standard-issue-weapons-discovered",
+      "category": "collections",
+      "title": "Standard-issue weapons discovered",
+      "needed": 50,
+      "total": 66,
+      "unit": "weapons",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "animals-studied",
+      "category": "collections",
+      "title": "Animals studied",
+      "needed": 100,
+      "total": 255,
+      "unit": "animals",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "gang-operations",
+      "category": "crime",
+      "title": "Gang operations",
+      "needed": 39,
+      "total": 39,
+      "unit": "operations",
+      "strict": true,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "bank-jobs",
+      "category": "crime",
+      "title": "Bank jobs",
+      "needed": 22,
+      "total": 22,
+      "unit": "jobs",
+      "strict": true,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "payday-loan-jobs",
+      "category": "crime",
+      "title": "Payday loan jobs",
+      "needed": 7,
+      "total": 7,
+      "unit": "jobs",
+      "strict": true,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "vaults",
+      "category": "crime",
+      "title": "Vaults",
+      "needed": 8,
+      "total": 8,
+      "unit": "vaults",
+      "strict": true,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "shooting-range-gold-medals",
+      "category": "activities",
+      "title": "Shooting range gold medals",
+      "needed": 42,
+      "total": 42,
+      "unit": "medals",
+      "strict": true,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "drone-time-trials",
+      "category": "activities",
+      "title": "Drone time trials",
+      "needed": 42,
+      "total": 42,
+      "unit": "trials",
+      "strict": true,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "brets-target-decks",
+      "category": "activities",
+      "title": "Bret's target decks",
+      "needed": 15,
+      "total": 15,
+      "unit": "decks",
+      "strict": true,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "fenced-narcotics",
+      "category": "fencing",
+      "title": "Fenced narcotics",
+      "needed": 100000,
+      "total": null,
+      "unit": "usd",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "fenced-jewellery",
+      "category": "fencing",
+      "title": "Fenced jewellery",
+      "needed": 100000,
+      "total": null,
+      "unit": "usd",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "fenced-marked-bills",
+      "category": "fencing",
+      "title": "Fenced marked bills",
+      "needed": 250000,
+      "total": null,
+      "unit": "usd",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    },
+    {
+      "id": "fenced-vehicles",
+      "category": "fencing",
+      "title": "Fenced vehicles",
+      "needed": 200000,
+      "total": null,
+      "unit": "usd",
+      "strict": false,
+      "sources": [
+        { "url": "https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist", "checkedOn": "2026-11-22" },
+        { "url": "https://gtaside.com/tips/gta6/100-percent-completion/", "checkedOn": "2026-11-22" }
+      ]
+    }
+  ]
+}

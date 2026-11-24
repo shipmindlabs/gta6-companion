@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import type { Chapter, Mission } from "./schema.ts";
+import type { Chapter, Mission, Requirement, RequirementSet } from "./schema.ts";
 import { Gta6DataError } from "./validate.ts";
 
 const DATA_DIR = fileURLToPath(new URL("../data/", import.meta.url));
@@ -62,4 +62,12 @@ export function loadMissions(
     ...mandatory,
     ...optional.filter((entry) => entry.chapterId === chapterId),
   ];
+}
+
+export function loadRequirementSet(): RequirementSet {
+  return readJson<RequirementSet>("requirements.json");
+}
+
+export function loadRequirements(): Requirement[] {
+  return loadRequirementSet().requirements;
 }

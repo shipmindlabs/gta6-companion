@@ -21,3 +21,22 @@ export type Mission = {
   note?: string;
   sources: Source[];
 };
+
+export type Requirement = {
+  id: string;
+  category: string;
+  title: string;
+  needed: number;
+  // null when no total is reported for the requirement.
+  total: number | null;
+  unit: string;
+  strict: boolean;
+  sources: Source[];
+};
+
+export type RequirementSet = {
+  // false while the file holds fewer requirements than the guides list.
+  complete: boolean;
+  note: string;
+  requirements: Requirement[];
+};
