@@ -40,3 +40,29 @@ export type RequirementSet = {
   note: string;
   requirements: Requirement[];
 };
+
+export type CheatInputStatus = "confirmed" | "unverified";
+
+export type Cheat = {
+  id: string;
+  name: string;
+  unlock: string;
+  // null until two independent sources report the same sequence.
+  input: string | null;
+  inputStatus: CheatInputStatus;
+  sources: Source[];
+};
+
+export type CheatSet = {
+  // How many cheats the game has, including the ones this file does not list.
+  total: number;
+  usableFromStart: boolean;
+  unlock: string;
+  inputDevice: string;
+  platforms: string[];
+  // false while no PC version is announced, so no PC inputs exist.
+  pcInputs: boolean;
+  note: string;
+  sources: Source[];
+  cheats: Cheat[];
+};

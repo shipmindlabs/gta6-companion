@@ -1,6 +1,6 @@
-import type { Chapter, Mission, Requirement, Source } from "./schema.ts";
+import type { Chapter, Cheat, Mission, Requirement, Source } from "./schema.ts";
 
-export type DatasetKind = "chapter" | "mission" | "requirement";
+export type DatasetKind = "chapter" | "cheat" | "mission" | "requirement";
 
 export type Problem = {
   code: string;
@@ -22,7 +22,8 @@ export class Gta6DataError extends Error {
 
 const KEBAB_CASE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
-const KINDS = new Set<string>(["chapter", "mission", "requirement"]);
+const KINDS = new Set<string>(["chapter", "cheat", "mission", "requirement"]);
+const INPUT_STATUSES = new Set<string>(["confirmed", "unverified"]);
 
 function isCalendarDate(value: string): boolean {
   const parts = ISO_DATE.exec(value);
@@ -48,6 +49,17 @@ function problem(
   message: string,
 ): Problem {
   return { code, index, entryId, field, message };
+}
+
+function hostnameOf(url: unknown): string | null {
+  if (typeof url !== "string") {
+    return null;
+  }
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return null;
+  }
 }
 
 function checkText(
@@ -203,6 +215,75 @@ function checkRequirement(
   }
 }
 
+function checkCheat(
+  cheat: Cheat,
+  index: number,
+  entryId: string,
+  problems: Problem[],
+): void {
+  checkText(cheat.unlock, index, entryId, "unlock", problems);
+
+  const input: unknown = cheat.input;
+  if (input !== null && (typeof input !== "string" || input.trim() === "")) {
+    problems.push(
+      problem(
+        "empty_field",
+        index,
+        entryId,
+        "input",
+        "input must be a non-empty string or null",
+      ),
+    );
+  }
+
+  const status: unknown = cheat.inputStatus;
+  if (typeof status !== "string" || !INPUT_STATUSES.has(status)) {
+    problems.push(
+      problem(
+        "invalid_input_status",
+        index,
+        entryId,
+        "inputStatus",
+        'inputStatus must be "confirmed" or "unverified"',
+      ),
+    );
+    return;
+  }
+
+  if (status !== "confirmed") {
+    return;
+  }
+
+  if (input === null) {
+    problems.push(
+      problem(
+        "confirmed_without_input",
+        index,
+        entryId,
+        "input",
+        'inputStatus "confirmed" needs a non-null input',
+      ),
+    );
+  }
+
+  const hostnames = new Set(
+    (cheat.sources ?? [])
+      .map((source) => hostnameOf(source?.url))
+      .filter((hostname): hostname is string => hostname !== null),
+  );
+  if (hostnames.size < 2) {
+    problems.push(
+      problem(
+        "confirmed_without_two_sources",
+        index,
+        entryId,
+        "sources",
+        'inputStatus "confirmed" needs at least two sources with different hostnames',
+      ),
+    );
+  }
+}
+
 export function validateDataset(kind: "chapter", entries: readonly Chapter[]): Problem[];
 export function validateDataset(
   kind: "mission",
@@ -213,9 +294,10 @@ export function validateDataset(
   kind: "requirement",
   entries: readonly Requirement[],
 ): Problem[];
+export function validateDataset(kind: "cheat", entries: readonly Cheat[]): Problem[];
 export function validateDataset(
   kind: DatasetKind,
-  entries: readonly (Chapter | Mission | Requirement)[],
+  entries: readonly (Chapter | Mission | Requirement | Cheat)[],
   chapterIds: readonly string[] = [],
 ): Problem[] {
   if (!KINDS.has(kind)) {
@@ -241,8 +323,17 @@ export function validateDataset(
       seen.add(id);
     }
 
-    checkText(entry.title, index, entryId, "title", problems);
-    checkSources(entry.sources, index, entryId, problems);
+    if (kind === "cheat") {
+      const cheat = entry as Cheat;
+      checkText(cheat.name, index, entryId, "name", problems);
+      checkSources(cheat.sources, index, entryId, problems);
+      checkCheat(cheat, index, entryId, problems);
+      return;
+    }
+
+    const titled = entry as Chapter | Mission | Requirement;
+    checkText(titled.title, index, entryId, "title", problems);
+    checkSources(titled.sources, index, entryId, problems);
 
     if (kind === "chapter") {
       const chapter = entry as Chapter;

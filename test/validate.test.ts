@@ -173,7 +173,7 @@ test("an empty requirement category or unit is refused", () => {
 
 test("an unknown dataset kind throws Gta6DataError with a code", () => {
   assert.throws(
-    () => validateDataset("cheat" as "chapter", []),
+    () => validateDataset("vehicle" as "chapter", []),
     (error: unknown) => error instanceof Gta6DataError && error.code === "unknown_kind",
   );
 });

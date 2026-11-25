@@ -1,0 +1,74 @@
+{
+  "total": 61,
+  "usableFromStart": false,
+  "unlock": "A Cheats entry appears in the Progress tab of the pause menu after the final story mission, so no cheat can be used from the start.",
+  "inputDevice": "d-pad",
+  "platforms": ["PlayStation 5", "Xbox Series X|S"],
+  "pcInputs": false,
+  "note": "Input sequences are entered on the D-pad and are the same on PlayStation 5 and Xbox Series X|S. There are no PC inputs because no PC version is announced. Launch guides disagree on several sequences, so a sequence is published here only when two independent sources agree; until then input is null and inputStatus is \"unverified\". This file holds the four cheats reported to unlock when the story ends, not all 61.",
+  "sources": [
+    { "url": "https://www.redbull.com/us-en/gta-6-cheat-codes", "checkedOn": "2026-11-22" },
+    {
+      "url": "https://www.pcguide.com/news/gta-6-cheat-codes-list-for-playstation-5-xbox-series-xs-and-how-to-unlock-them/",
+      "checkedOn": "2026-11-22"
+    }
+  ],
+  "cheats": [
+    {
+      "id": "cash-250000",
+      "name": "$250,000",
+      "unlock": "story-complete",
+      "input": null,
+      "inputStatus": "unverified",
+      "sources": [
+        { "url": "https://www.redbull.com/us-en/gta-6-cheat-codes", "checkedOn": "2026-11-22" },
+        {
+          "url": "https://www.pcguide.com/news/gta-6-cheat-codes-list-for-playstation-5-xbox-series-xs-and-how-to-unlock-them/",
+          "checkedOn": "2026-11-22"
+        }
+      ]
+    },
+    {
+      "id": "unlimited-focus",
+      "name": "Unlimited Focus",
+      "unlock": "story-complete",
+      "input": null,
+      "inputStatus": "unverified",
+      "sources": [
+        { "url": "https://www.redbull.com/us-en/gta-6-cheat-codes", "checkedOn": "2026-11-22" },
+        {
+          "url": "https://www.pcguide.com/news/gta-6-cheat-codes-list-for-playstation-5-xbox-series-xs-and-how-to-unlock-them/",
+          "checkedOn": "2026-11-22"
+        }
+      ]
+    },
+    {
+      "id": "attack-force",
+      "name": "Attack Force",
+      "unlock": "story-complete",
+      "input": null,
+      "inputStatus": "unverified",
+      "sources": [
+        { "url": "https://www.redbull.com/us-en/gta-6-cheat-codes", "checkedOn": "2026-11-22" },
+        {
+          "url": "https://www.pcguide.com/news/gta-6-cheat-codes-list-for-playstation-5-xbox-series-xs-and-how-to-unlock-them/",
+          "checkedOn": "2026-11-22"
+        }
+      ]
+    },
+    {
+      "id": "cycle-weather",
+      "name": "Cycle Weather",
+      "unlock": "story-complete",
+      "input": null,
+      "inputStatus": "unverified",
+      "sources": [
+        { "url": "https://www.redbull.com/us-en/gta-6-cheat-codes", "checkedOn": "2026-11-22" },
+        {
+          "url": "https://www.pcguide.com/news/gta-6-cheat-codes-list-for-playstation-5-xbox-series-xs-and-how-to-unlock-them/",
+          "checkedOn": "2026-11-22"
+        }
+      ]
+    }
+  ]
+}
