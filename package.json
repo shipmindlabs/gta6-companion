@@ -14,6 +14,9 @@
     "url": "https://github.com/shipmindlabs/gta6-companion/issues"
   },
   "exports": "./src/index.ts",
+  "bin": {
+    "gta6": "src/cli.ts"
+  },
   "engines": {
     "node": ">=22.18"
   },

@@ -39,9 +39,11 @@ the repository:
 - `src/progress.ts` - the progress document and pure functions over it:
   `emptyProgress()`, `markMission()`, `unmarkMission()`, `setCount()`,
   `summarize()` and `whatsLeft()`.
+- `src/cli.ts` - the `gta6` command: `left`, `status`, `done`, `undo`, `set`
+  and `missions`.
 - `src/index.ts` - public entry point.
-- `test/validate.test.ts`, `test/data.test.ts` and `test/progress.test.ts` -
-  tests, run with `npm test` on Node >= 22.18.
+- `test/validate.test.ts`, `test/data.test.ts`, `test/progress.test.ts` and
+  `test/cli.test.ts` - tests, run with `npm test` on Node >= 22.18.
 
 The cheat list, the MCP server and the Agent Skill are not in the repository
 yet.
@@ -79,6 +81,45 @@ A requirement holds `needed` and `total` counts. `strict` is true when `needed`
 equals `total`, so the requirement is all or nothing; `total` is `null` when no
 total is reported for it. `loadRequirementSet()` returns the same entries plus
 the `complete` flag and the note about what is still missing.
+
+## Command line
+
+`src/cli.ts` is the `gta6` command. Node runs it with type stripping, so there
+is no build step: `npx gta6 left`, or `npm link` once and then `gta6 left`.
+
+| Command | What it does |
+| --- | --- |
+| `gta6 left` | the next story mission and every unmet requirement |
+| `gta6 status` | story and per-chapter progress, plus requirements met |
+| `gta6 done <mission>` | marks a mission done, by id or exact title |
+| `gta6 undo <mission>` | unmarks a mission |
+| `gta6 set <requirement-id> <n>` | records how many of a requirement you have |
+| `gta6 missions [chapter]` | lists missions, all of them or one chapter |
+
+```sh
+gta6 done ch1-prologue
+gta6 done "Gone Fishing"
+gta6 set card-sets 9
+gta6 missions 2 --spoilers
+gta6 status --file ~/gta6.json
+```
+
+The progress file is the `--file <path>` argument if given, else
+`$GTA6_PROGRESS`, else `./gta6-progress.json`. It is created on the first write
+and written atomically, to a temporary file that is renamed over the old one, so
+a failed write leaves the previous file untouched.
+
+A mission can be named by id (`ch1-gone-fishing`) or by its exact title,
+case-insensitive (`gone fishing`). An unknown or ambiguous name exits with code
+2 and lists the closest ids. Exit code 0 means the command ran, 1 means the
+progress file could not be read or written, 2 means the command line was wrong.
+
+Mission titles are spoilers, so the titles of missions past the next unfinished
+one are printed as `Chapter 3, mission 7` unless `--spoilers` is passed.
+
+`run(argv, io)` in `src/cli.ts` returns `{code, out}` and takes every side
+effect through its `io` argument, so `test/cli.test.ts` drives the commands
+against an in-memory file map without spawning a process.
 
 ## GTA 6 mission list
 
