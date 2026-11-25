@@ -10,8 +10,8 @@ Skill.
 
 ## Status
 
-The complete story mission list and a first pass at the 100% requirements are in
-the repository:
+The complete story mission list, a first pass at the 100% requirements and the
+cheat facts are in the repository:
 
 - `data/chapters.json` - the five story chapters with their mandatory mission
   counts, 91 story missions in total.
@@ -29,24 +29,26 @@ the repository:
   mandatory counts, currently the two jobs from Billy's questline.
 - `data/requirements.json` - the 100% completion requirements cross-checked so
   far, with a `complete: false` flag while entries are missing.
+- `data/cheats.json` - how cheats unlock, how many there are, and the four
+  cheats reported to unlock when the story ends.
 - `src/schema.ts` - plain types for `Source`, `Chapter`, `Mission`,
-  `Requirement` and `RequirementSet`.
+  `Requirement`, `RequirementSet`, `Cheat` and `CheatSet`.
 - `src/validate.ts` - `validateDataset(kind, entries)`, which returns a list of
   problems instead of throwing, plus `Gta6DataError` for a bad dataset kind.
 - `src/data.ts` - `loadChapters()`, `loadMissions(chapterNumber?, options?)`,
-  `loadRequirements()` and `loadRequirementSet()`, which read the JSON files
-  from `data/`.
+  `loadRequirements()`, `loadRequirementSet()`, `loadCheats()` and
+  `loadCheatSet()`, which read the JSON files from `data/`.
 - `src/progress.ts` - the progress document and pure functions over it:
   `emptyProgress()`, `markMission()`, `unmarkMission()`, `setCount()`,
   `summarize()` and `whatsLeft()`.
 - `src/cli.ts` - the `gta6` command: `left`, `status`, `done`, `undo`, `set`
   and `missions`.
 - `src/index.ts` - public entry point.
-- `test/validate.test.ts`, `test/data.test.ts`, `test/progress.test.ts` and
-  `test/cli.test.ts` - tests, run with `npm test` on Node >= 22.18.
+- `test/validate.test.ts`, `test/data.test.ts`, `test/progress.test.ts`,
+  `test/cheats.test.ts` and `test/cli.test.ts` - tests, run with `npm test` on
+  Node >= 22.18.
 
-The cheat list, the MCP server and the Agent Skill are not in the repository
-yet.
+The MCP server and the Agent Skill are not in the repository yet.
 
 ## Usage
 
@@ -312,6 +314,53 @@ Sources for the requirements, both checked on 2026-11-22:
 <https://www.pushsquare.com/guides/gta-6-100percent-completion-checklist> and
 <https://gtaside.com/tips/gta6/100-percent-completion/>
 
+## GTA 6 cheat codes
+
+GTA 6 has 61 cheats, and none of them can be used from the start. A Cheats entry
+appears in the Progress tab of the pause menu after the final story mission, so
+cheats become available only once the story is finished. Input sequences are
+entered on the D-pad and are the same on PlayStation 5 and Xbox Series X|S.
+There are no PC inputs, because no PC version is announced.
+
+Four cheats are reported to unlock when the story ends:
+
+| Cheat | Id | Unlock | Input |
+| --- | --- | --- | --- |
+| $250,000 | `cash-250000` | story-complete | unverified |
+| Unlimited Focus | `unlimited-focus` | story-complete | unverified |
+| Attack Force | `attack-force` | story-complete | unverified |
+| Cycle Weather | `cycle-weather` | story-complete | unverified |
+
+Launch guides disagree on several button sequences, so this dataset publishes a
+sequence only when two independent sources report the same one. Until then
+`input` is `null`, `inputStatus` is `"unverified"`, and no sequence is printed
+here either. `validateDataset("cheat", entries)` enforces the rule: an
+`inputStatus` of `"confirmed"` needs a non-null `input` and at least two sources
+on different hostnames, otherwise the entry comes back as a problem
+(`confirmed_without_input` or `confirmed_without_two_sources`).
+
+`data/cheats.json` keeps the counts and the unlock note next to the entries, so
+`loadCheatSet()` returns `total`, `usableFromStart`, `unlock`, `inputDevice`,
+`platforms` and `pcInputs` along with the four cheats, while `loadCheats()`
+returns the entries alone. The file holds the four cheats that unlock with the
+story, not all 61.
+
+```ts
+import { loadCheatSet, loadCheats, validateDataset } from "gta6-companion";
+
+const set = loadCheatSet();
+set.total; // 61
+set.usableFromStart; // false
+
+const cheats = loadCheats();
+const published = cheats.filter((entry) => entry.inputStatus === "confirmed");
+const problems = validateDataset("cheat", cheats);
+```
+
+Sources for the cheats, both checked on 2026-11-22:
+<https://www.redbull.com/us-en/gta-6-cheat-codes> and
+<https://www.pcguide.com/news/gta-6-cheat-codes-list-for-playstation-5-xbox-series-xs-and-how-to-unlock-them/>
+
 ## GTA 6 progress tracker
 
 `src/progress.ts` holds the progress document and pure functions over it. It
@@ -392,6 +441,7 @@ first.
 - Every entry cites a public source and the date it was checked (`checkedOn`).
 - No walkthrough text is copied from other sites.
 - Spoilers are marked, so a reader can opt out of story details.
+- A cheat input sequence is published only when two independent sources agree.
 
 ## Disclaimer
 
