@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { readFileSync, realpathSync, renameSync, rmSync, writeFileSync } from "node:fs";
 
-import { loadChapters, loadMissions, loadRequirements } from "./data.ts";
-import type { Progress, ProgressData, RequirementProgress } from "./progress.ts";
+import { loadChapters, loadCheats, loadMissions, loadRequirements } from "./data.ts";
+import type { Progress, RequirementProgress } from "./progress.ts";
 import {
   emptyProgress,
   markMission,
@@ -11,13 +11,15 @@ import {
   unmarkMission,
   whatsLeft,
 } from "./progress.ts";
+import type { SearchData, SearchHit } from "./search.ts";
+import { editDistance, search, storyIndexes } from "./search.ts";
 import type { Chapter, Mission } from "./schema.ts";
 import { Gta6DataError } from "./validate.ts";
 
 export type Io = {
   env: Record<string, string | undefined>;
   now: () => string;
-  data: ProgressData;
+  data: SearchData;
   // null when the progress file is not there yet
   readFile: (file: string) => string | null;
   writeFile: (file: string, body: string) => void;
@@ -55,7 +57,8 @@ const DEFAULT_FILE = "gta6-progress.json";
 const SUGGESTIONS = 5;
 const ID_WIDTH = 34;
 const TITLE_WIDTH = 20;
-const COMMANDS = ["left", "status", "done", "undo", "set", "missions"];
+const KIND_WIDTH = 11;
+const COMMANDS = ["left", "status", "done", "undo", "set", "missions", "search"];
 
 const USAGE = [
   "gta6 - track GTA 6 missions and 100% progress from a terminal",
@@ -67,6 +70,7 @@ const USAGE = [
   "  gta6 undo <mission>            unmark a mission",
   "  gta6 set <requirement-id> <n>  record how many of a requirement you have",
   "  gta6 missions [chapter]        list missions, all of them or one chapter",
+  "  gta6 search <words>            find a mission, requirement or cheat by name",
   "",
   "Options:",
   "  --file <path>  progress file; defaults to $GTA6_PROGRESS or ./gta6-progress.json",
@@ -95,6 +99,7 @@ export function defaultIo(): Io {
       chapters: loadChapters(),
       missions: loadMissions(undefined, { includeOptional: true }),
       requirements: loadRequirements(),
+      cheats: loadCheats(),
     },
     readFile: (file) => {
       try {
@@ -186,25 +191,6 @@ function writeProgress(io: Io, file: string, progress: Progress): void {
   }
 }
 
-function distance(left: string, right: string): number {
-  let previous = Array.from({ length: right.length + 1 }, (_, index) => index);
-
-  for (let row = 1; row <= left.length; row += 1) {
-    const current = [row];
-    for (let column = 1; column <= right.length; column += 1) {
-      const cost = left[row - 1] === right[column - 1] ? 0 : 1;
-      current[column] = Math.min(
-        current[column - 1] + 1,
-        previous[column] + 1,
-        previous[column - 1] + cost,
-      );
-    }
-    previous = current;
-  }
-
-  return previous[right.length];
-}
-
 function slug(value: string): string {
   return value
     .toLowerCase()
@@ -218,7 +204,10 @@ function closest(name: string, candidates: readonly Named[]): string[] {
   return candidates
     .map((entry) => ({
       id: entry.id,
-      score: Math.min(distance(needle, entry.id), distance(needle, slug(entry.title))),
+      score: Math.min(
+        editDistance(needle, entry.id),
+        editDistance(needle, slug(entry.title)),
+      ),
     }))
     .sort((left, right) => left.score - right.score || left.id.localeCompare(right.id))
     .slice(0, SUGGESTIONS)
@@ -457,6 +446,33 @@ function missionsCommand(args: readonly string[], view: View): Result {
   return { code: 0, out: `${blocks.join("\n\n")}\n` };
 }
 
+function hitLine(hit: SearchHit): string {
+  const where = hit.chapter === undefined ? "" : ` (Chapter ${hit.chapter})`;
+  return `  ${hit.kind.padEnd(KIND_WIDTH)} ${hit.id.padEnd(ID_WIDTH)} ${hit.title}${where}`;
+}
+
+function searchCommand(args: readonly string[], view: View): Result {
+  const query = args.join(" ").trim();
+  if (query === "") {
+    throw new CliError("search needs words to look for", 2);
+  }
+
+  const spoilerLimit =
+    view.spoilers || view.nextId === null
+      ? undefined
+      : storyIndexes(view.io.data).get(view.nextId);
+  const hits = search(query, view.io.data, { spoilerLimit });
+
+  if (hits.length === 0) {
+    const hint = view.spoilers
+      ? ""
+      : "\nmissions past the next one are left out; pass --spoilers to search them";
+    return { code: 0, out: `nothing found for "${query}"${hint}\n` };
+  }
+
+  return { code: 0, out: `${hits.map(hitLine).join("\n")}\n` };
+}
+
 function dispatch(command: string, options: Options, io: Io): Result {
   const args = options.args.slice(1);
   const file = fileFor(options, io);
@@ -473,6 +489,8 @@ function dispatch(command: string, options: Options, io: Io): Result {
       return undoCommand(args, view, file);
     case "set":
       return setCommand(args, view, file);
+    case "search":
+      return searchCommand(args, view);
     default:
       return missionsCommand(args, view);
   }

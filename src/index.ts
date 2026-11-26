@@ -36,3 +36,5 @@ export {
   unmarkMission,
   whatsLeft,
 } from "./progress.ts";
+export type { SearchData, SearchHit, SearchKind, SearchOptions } from "./search.ts";
+export { search } from "./search.ts";
