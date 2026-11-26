@@ -41,12 +41,15 @@ cheat facts are in the repository:
 - `src/progress.ts` - the progress document and pure functions over it:
   `emptyProgress()`, `markMission()`, `unmarkMission()`, `setCount()`,
   `summarize()` and `whatsLeft()`.
-- `src/cli.ts` - the `gta6` command: `left`, `status`, `done`, `undo`, `set`
-  and `missions`.
+- `src/search.ts` - `search(query, data, options?)` over missions, requirements
+  and cheats, with one typo per word tolerated and spoilers left out on
+  request.
+- `src/cli.ts` - the `gta6` command: `left`, `status`, `done`, `undo`, `set`,
+  `missions` and `search`.
 - `src/index.ts` - public entry point.
 - `test/validate.test.ts`, `test/data.test.ts`, `test/progress.test.ts`,
-  `test/cheats.test.ts` and `test/cli.test.ts` - tests, run with `npm test` on
-  Node >= 22.18.
+  `test/cheats.test.ts`, `test/search.test.ts` and `test/cli.test.ts` - tests,
+  run with `npm test` on Node >= 22.18.
 
 The MCP server and the Agent Skill are not in the repository yet.
 
@@ -97,12 +100,14 @@ is no build step: `npx gta6 left`, or `npm link` once and then `gta6 left`.
 | `gta6 undo <mission>` | unmarks a mission |
 | `gta6 set <requirement-id> <n>` | records how many of a requirement you have |
 | `gta6 missions [chapter]` | lists missions, all of them or one chapter |
+| `gta6 search <words>` | finds a mission, requirement or cheat by name |
 
 ```sh
 gta6 done ch1-prologue
 gta6 done "Gone Fishing"
 gta6 set card-sets 9
 gta6 missions 2 --spoilers
+gta6 search cartel heist --spoilers
 gta6 status --file ~/gta6.json
 ```
 
@@ -122,6 +127,57 @@ one are printed as `Chapter 3, mission 7` unless `--spoilers` is passed.
 `run(argv, io)` in `src/cli.ts` returns `{code, out}` and takes every side
 effect through its `io` argument, so `test/cli.test.ts` drives the commands
 against an in-memory file map without spawning a process.
+
+## Search
+
+`src/search.ts` holds `search(query, data, options?)`, which finds a mission, a
+requirement or a cheat by name. Matching is case-insensitive and ignores
+punctuation and diacritics, so `Photo/Shoot`, `photo shoot` and `hèy arnöld`
+all find their mission. One typo per word is tolerated, two swapped letters
+included, because `editDistance()` is a Damerau-Levenshtein distance written in
+the file itself; the package still has no dependencies.
+
+```ts
+import {
+  loadChapters,
+  loadCheats,
+  loadMissions,
+  loadRequirements,
+  search,
+} from "gta6-companion";
+
+const data = {
+  chapters: loadChapters(),
+  missions: loadMissions(undefined, { includeOptional: true }),
+  requirements: loadRequirements(),
+  cheats: loadCheats(),
+};
+
+search("cartel heist", data); // the Chapter 3 finale, as a mission hit
+search("gon fishing", data); // Gone Fishing, one edit away
+search("flamingo", data, { kinds: ["requirement"] }); // cocaine-flamingos
+search("cartel heist", data, { spoilerLimit: 58 }); // [], too far ahead
+```
+
+A hit is `{kind, id, title, chapter?, score}`, where `kind` is `"mission"`,
+`"requirement"` or `"cheat"` and `chapter` is the chapter number, present for
+missions only. Hits come back sorted by score, highest first:
+
+| Score | Match |
+| --- | --- |
+| 100 | the query is the whole title, or the whole id |
+| 80 | the title or the id starts with the query |
+| 60 | every query word starts a word of the title |
+| 40 or 39 | every query word is within one edit of a word of the title |
+
+Equal scores are broken by the shorter title, then by id. `limit` caps how many
+hits come back and defaults to 10, `kinds` narrows the search to some of the
+three kinds, and `spoilerLimit` takes a story mission index and drops the
+missions past it. An empty, blank or punctuation-only query returns `[]`.
+
+`gta6 search <words>` passes the index of the next unfinished mission as the
+`spoilerLimit`, so a search cannot name a title you have not reached yet;
+`--spoilers` searches the whole story.
 
 ## GTA 6 mission list
 
