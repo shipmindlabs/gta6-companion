@@ -47,7 +47,8 @@ cheat facts are in the repository:
 - `src/cli.ts` - the `gta6` command: `left`, `status`, `done`, `undo`, `set`,
   `missions` and `search`.
 - `src/mcp/server.ts` - the `gta6-mcp` command: a Model Context Protocol server
-  over stdio with four read-only tools over the same progress file.
+  over stdio with four read tools and three write tools over the same progress
+  file, or read-only when started with `--read-only`.
 - `src/index.ts` - public entry point.
 - `test/validate.test.ts`, `test/data.test.ts`, `test/progress.test.ts`,
   `test/cheats.test.ts`, `test/search.test.ts`, `test/cli.test.ts` and
@@ -133,10 +134,10 @@ against an in-memory file map without spawning a process.
 ## MCP server
 
 `src/mcp/server.ts` is the `gta6-mcp` command: a Model Context Protocol server
-over stdio, newline-delimited JSON-RPC 2.0, with no dependencies. It reads the
-same progress file as the CLI, so an assistant answers from the checklist you
-keep with `gta6 done` and `gta6 set`. It only reads: nothing in the server
-writes to the progress file.
+over stdio, newline-delimited JSON-RPC 2.0, with no dependencies. It reads and
+writes the same progress file as the CLI, so an assistant answers from the
+checklist you keep with `gta6 done` and `gta6 set`, and can tick a mission off
+for you when you ask it to.
 
 ```json
 {
@@ -160,19 +161,59 @@ empty progress document, so the first question already works.
 | `gta6_status` | none | story and per-chapter progress, plus requirements met |
 | `gta6_mission` | `query`, `spoilers?` | up to five matching missions with position and state |
 | `gta6_requirements` | `onlyUnmet?` | requirements with `have`, `needed` and what is left |
+| `gta6_mark_done` | `mission` | marks a mission done, with the new chapter and story counts |
+| `gta6_undo` | `mission` | takes a mission back off the done list |
+| `gta6_set_count` | `requirement`, `count` | records a requirement count and what is left of it |
 
 Each tool declares a JSON Schema `inputSchema` and answers with a single text
 content block. `gta6_mission` searches with `src/search.ts`, so one typo per
 word is tolerated.
+
+### The write tools
+
+`gta6_mark_done`, `gta6_undo` and `gta6_set_count` change the progress file.
+They name a mission the way the CLI does, by id (`ch2-moses`) or by its exact
+title, case-insensitive (`moses`); an unknown or ambiguous name comes back as a
+result with `isError: true` listing the candidates or the closest ids, never as
+a protocol error. A requirement is named by its id from
+`data/requirements.json`.
+
+Each of them answers with the new summary line, `Chapter 2: 4 of 11, story 26
+of 91`, and each is idempotent: marking a mission that is already done, undoing
+one that was never marked, or setting a count to the value it already has writes
+nothing and says so. That is what their annotations declare,
+`destructiveHint: false` and `idempotentHint: true`. The write itself is the
+atomic write of the CLI - a temporary file renamed over the old one - so a
+failed write leaves the previous file untouched.
+
+Started with `--read-only`, or with `GTA6_READ_ONLY=1` in the environment, the
+server has no writer at all: `tools/list` leaves the three write tools out, and
+a `tools/call` for one of them comes back with `isError: true` and says the
+server was started read-only. The four read tools work as usual.
+
+```json
+{
+  "mcpServers": {
+    "gta6-companion": {
+      "command": "npx",
+      "args": ["-y", "--package", "gta6-companion", "gta6-mcp", "--read-only"],
+      "env": { "GTA6_PROGRESS": "/home/you/gta6.json" }
+    }
+  }
+}
+```
+
+### Protocol
 
 The server handles `initialize`, `notifications/initialized`, `ping`,
 `tools/list` and `tools/call`. The `protocolVersion` from `initialize` is echoed
 back when it is one the server knows (`2025-06-18`, `2025-03-26`,
 `2024-11-05`), otherwise the server answers with its own, `2025-06-18`.
 
-An unknown method is `-32601`, a missing tool name or a wrongly typed argument
-is `-32602`, and a line that is not valid JSON is `-32700`. A tool that cannot
-do its work - an unreadable progress file, a query that matches no mission -
+An unknown method is `-32601`; a missing tool name, a wrongly typed argument or
+a count that is not a whole number of 0 or more is `-32602`; and a line that is
+not valid JSON is `-32700`. A tool that cannot do its work - an unreadable
+progress file, a query that matches no mission, a server started read-only -
 comes back as a normal result with `isError: true`, so the assistant can read
 what went wrong instead of stopping at the protocol layer.
 
@@ -182,9 +223,11 @@ of 91, not done, title withheld`) unless `spoilers: true` is passed, and
 `gta6_whats_left` names the missions after the next one only with the same flag.
 
 `handle(message, ctx)` is a pure function returning the response, or `null` for
-a notification, so `test/mcp.test.ts` drives the whole protocol without
-spawning a process. `main()` only wires stdin and stdout and writes nothing but
-protocol messages to stdout.
+a notification, and `ctx` carries the dataset, a `loadProgress` and - unless the
+server is read-only - a `saveProgress`, so `test/mcp.test.ts` drives the whole
+protocol, writes included, without spawning a process or touching a file.
+`main()` only wires stdin and stdout and writes nothing but protocol messages to
+stdout.
 
 ## Search
 
