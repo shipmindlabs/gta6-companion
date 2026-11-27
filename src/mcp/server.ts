@@ -1,14 +1,21 @@
 #!/usr/bin/env node
-import { readFileSync } from "node:fs";
+import { readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import process from "node:process";
 import { pathToFileURL } from "node:url";
 
 import { loadChapters, loadMissions, loadRequirements } from "../data.ts";
 import type { Progress, ProgressData, RequirementProgress } from "../progress.ts";
-import { emptyProgress, summarize, whatsLeft } from "../progress.ts";
-import type { Mission } from "../schema.ts";
+import {
+  emptyProgress,
+  markMission,
+  setCount,
+  summarize,
+  unmarkMission,
+  whatsLeft,
+} from "../progress.ts";
+import type { Mission, Requirement } from "../schema.ts";
 import type { SearchData } from "../search.ts";
-import { search, storyIndexes } from "../search.ts";
+import { editDistance, search, storyIndexes } from "../search.ts";
 
 const SERVER_NAME = "gta6-companion";
 const SERVER_VERSION = "0.0.1";
@@ -19,8 +26,12 @@ const KNOWN_PROTOCOL_VERSIONS: readonly string[] = [
   "2024-11-05",
 ];
 const DEFAULT_PROGRESS_FILE = "gta6-progress.json";
+const READ_ONLY_FLAG = "--read-only";
+const READ_ONLY_REFUSAL =
+  "this server was started read-only, so it will not change the progress file; start it without --read-only and without GTA6_READ_ONLY=1 to allow writes";
 const UPCOMING = 5;
 const MATCHES = 5;
+const SUGGESTIONS = 5;
 
 const PARSE_ERROR = -32700;
 const INVALID_REQUEST = -32600;
@@ -30,6 +41,9 @@ const INVALID_PARAMS = -32602;
 export type ServerContext = {
   data: ProgressData;
   loadProgress: () => Progress;
+  // absent when the server runs read-only: the write tools are then left out of
+  // tools/list and refuse the call
+  saveProgress?: (progress: Progress) => void;
 };
 
 export type JsonRpcResponse = {
@@ -48,7 +62,14 @@ type Tool = {
   name: string;
   description: string;
   inputSchema: Record<string, unknown>;
+  annotations: Record<string, unknown>;
+  write: boolean;
   run: (args: Record<string, unknown>, ctx: ServerContext) => string;
+};
+
+type Named = {
+  id: string;
+  title: string;
 };
 
 // Wrong arguments are a protocol error (-32602); every other tool failure comes
@@ -74,6 +95,14 @@ function stringArg(args: Record<string, unknown>, name: string): string {
   const value = args[name];
   if (typeof value !== "string" || value.trim() === "") {
     throw new BadParams(`"${name}" must be a non-empty string`);
+  }
+  return value;
+}
+
+function integerArg(args: Record<string, unknown>, name: string): number {
+  const value = args[name];
+  if (typeof value !== "number" || !Number.isInteger(value) || value < 0) {
+    throw new BadParams(`"${name}" must be an integer of 0 or more`);
   }
   return value;
 }
@@ -122,6 +151,93 @@ function requirementLine(entry: RequirementProgress): string {
 
 function storyLine(done: number, total: number, percent: number): string {
   return `Story: ${String(done)} of ${String(total)} done, ${String(percent)}%.`;
+}
+
+function summaryLine(progress: Progress, data: ProgressData, chapterId?: string): string {
+  const summary = summarize(progress, data);
+  const wanted = chapterId ?? whatsLeft(progress, data).nextMission?.chapterId;
+  const chapter =
+    summary.chapters.find((entry) => entry.id === wanted) ??
+    summary.chapters[summary.chapters.length - 1];
+
+  return `Chapter ${String(chapter.number)}: ${String(chapter.done)} of ${String(chapter.total)}, story ${String(summary.story.done)} of ${String(summary.story.total)}`;
+}
+
+function nextLine(progress: Progress, data: ProgressData): string {
+  const next = whatsLeft(progress, data).nextMission;
+  if (next === null) {
+    return "Next: nothing, every story mission is done.";
+  }
+  return `Next: ${next.title} (${next.id}).`;
+}
+
+function slug(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function closestIds(name: string, candidates: readonly Named[]): string {
+  const needle = slug(name);
+
+  return candidates
+    .map((entry) => ({
+      id: entry.id,
+      score: Math.min(
+        editDistance(needle, entry.id),
+        editDistance(needle, slug(entry.title)),
+      ),
+    }))
+    .sort((left, right) => left.score - right.score || left.id.localeCompare(right.id))
+    .slice(0, SUGGESTIONS)
+    .map((entry) => entry.id)
+    .join(", ");
+}
+
+function saver(ctx: ServerContext): (progress: Progress) => void {
+  if (ctx.saveProgress === undefined) {
+    throw new Error(READ_ONLY_REFUSAL);
+  }
+  return ctx.saveProgress;
+}
+
+// Same rules as the CLI: an id or an exact title, case-insensitive.
+function missionFor(name: string, ctx: ServerContext): Mission {
+  const needle = name.trim().toLowerCase();
+  const missions = ctx.data.missions;
+
+  const byId = missions.filter((entry) => entry.id.toLowerCase() === needle);
+  if (byId.length === 1) {
+    return byId[0];
+  }
+
+  const byTitle = missions.filter((entry) => entry.title.toLowerCase() === needle);
+  if (byTitle.length === 1) {
+    return byTitle[0];
+  }
+  if (byTitle.length > 1) {
+    throw new Error(
+      `"${name}" matches more than one mission: ${byTitle.map((entry) => entry.id).join(", ")}`,
+    );
+  }
+
+  throw new Error(
+    `no mission has the id or title "${name}"; closest ids: ${closestIds(name, missions)}`,
+  );
+}
+
+function requirementFor(name: string, ctx: ServerContext): Requirement {
+  const needle = name.trim().toLowerCase();
+  const found = ctx.data.requirements.find((entry) => entry.id === needle);
+
+  if (found === undefined) {
+    throw new Error(
+      `no requirement has the id "${name}"; closest ids: ${closestIds(name, ctx.data.requirements)}`,
+    );
+  }
+
+  return found;
 }
 
 function whatsLeftTool(args: Record<string, unknown>, ctx: ServerContext): string {
@@ -238,6 +354,86 @@ function requirementsTool(args: Record<string, unknown>, ctx: ServerContext): st
   return lines.join("\n");
 }
 
+function markDoneTool(args: Record<string, unknown>, ctx: ServerContext): string {
+  const name = stringArg(args, "mission");
+  const save = saver(ctx);
+  const mission = missionFor(name, ctx);
+  const before = ctx.loadProgress();
+  const already = before.missions[mission.id] !== undefined;
+  const after = markMission(before, mission.id);
+
+  if (!already) {
+    save(after);
+  }
+
+  return [
+    `${already ? "Already done" : "Done"}: ${mission.title} (${mission.id}).`,
+    summaryLine(after, ctx.data, mission.chapterId),
+    nextLine(after, ctx.data),
+  ].join("\n");
+}
+
+function undoTool(args: Record<string, unknown>, ctx: ServerContext): string {
+  const name = stringArg(args, "mission");
+  const save = saver(ctx);
+  const mission = missionFor(name, ctx);
+  const before = ctx.loadProgress();
+  const marked = before.missions[mission.id] !== undefined;
+  const after = unmarkMission(before, mission.id);
+
+  if (marked) {
+    save(after);
+  }
+
+  return [
+    `${marked ? "Undone" : "Not marked as done"}: ${mission.title} (${mission.id}).`,
+    summaryLine(after, ctx.data, mission.chapterId),
+    nextLine(after, ctx.data),
+  ].join("\n");
+}
+
+function setCountTool(args: Record<string, unknown>, ctx: ServerContext): string {
+  const name = stringArg(args, "requirement");
+  const count = integerArg(args, "count");
+  const save = saver(ctx);
+  const requirement = requirementFor(name, ctx);
+  const before = ctx.loadProgress();
+  const after = setCount(before, requirement.id, count, ctx.data);
+
+  if ((before.counts[requirement.id] ?? 0) !== count) {
+    save(after);
+  }
+
+  const have = after.counts[requirement.id];
+  const remaining = Math.max(0, requirement.needed - have);
+  const tail = remaining === 0 ? "met" : `${String(remaining)} left`;
+  const overall = summarize(after, ctx.data).overall;
+
+  return [
+    `Set ${requirement.id} to ${String(have)} of ${String(requirement.needed)} ${requirement.unit}, ${tail}.`,
+    `Requirements: ${String(overall.metRequirements)} of ${String(overall.totalRequirements)} met.`,
+    summaryLine(after, ctx.data),
+  ].join("\n");
+}
+
+const WRITE_ANNOTATIONS = {
+  readOnlyHint: false,
+  destructiveHint: false,
+  idempotentHint: true,
+};
+
+const MISSION_SCHEMA = {
+  type: "object",
+  properties: {
+    mission: {
+      type: "string",
+      description: "A mission id (ch2-moses) or its exact title (Moses).",
+    },
+  },
+  required: ["mission"],
+  additionalProperties: false,
+};
+
 const TOOLS: readonly Tool[] = [
   {
     name: "gta6_whats_left",
@@ -253,6 +449,8 @@ const TOOLS: readonly Tool[] = [
       },
       additionalProperties: false,
     },
+    annotations: { title: "What is left in GTA 6", readOnlyHint: true },
+    write: false,
     run: whatsLeftTool,
   },
   {
@@ -260,6 +458,8 @@ const TOOLS: readonly Tool[] = [
     description:
       "Story and per-chapter GTA 6 progress, plus how many of the 100% requirements are met.",
     inputSchema: { type: "object", properties: {}, additionalProperties: false },
+    annotations: { title: "GTA 6 progress", readOnlyHint: true },
+    write: false,
     run: statusTool,
   },
   {
@@ -278,6 +478,8 @@ const TOOLS: readonly Tool[] = [
       required: ["query"],
       additionalProperties: false,
     },
+    annotations: { title: "Find a GTA 6 mission", readOnlyHint: true },
+    write: false,
     run: missionTool,
   },
   {
@@ -294,7 +496,51 @@ const TOOLS: readonly Tool[] = [
       },
       additionalProperties: false,
     },
+    annotations: { title: "GTA 6 100% requirements", readOnlyHint: true },
+    write: false,
     run: requirementsTool,
+  },
+  {
+    name: "gta6_mark_done",
+    description:
+      "Mark a GTA 6 story mission done in the progress file, by id or exact title. Marking a mission that is already done changes nothing. Answers with the new chapter and story counts.",
+    inputSchema: MISSION_SCHEMA,
+    annotations: { title: "Mark a GTA 6 mission done", ...WRITE_ANNOTATIONS },
+    write: true,
+    run: markDoneTool,
+  },
+  {
+    name: "gta6_undo",
+    description:
+      "Take a GTA 6 mission back off the done list, by id or exact title. Answers with the new chapter and story counts.",
+    inputSchema: MISSION_SCHEMA,
+    annotations: { title: "Unmark a GTA 6 mission", ...WRITE_ANNOTATIONS },
+    write: true,
+    run: undoTool,
+  },
+  {
+    name: "gta6_set_count",
+    description:
+      "Record how many of a GTA 6 100% requirement you have, by requirement id. Answers with what is left of it and the new chapter and story counts.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        requirement: {
+          type: "string",
+          description: "A requirement id from the 100% list, such as card-sets.",
+        },
+        count: {
+          type: "integer",
+          minimum: 0,
+          description: "How many of them you have now.",
+        },
+      },
+      required: ["requirement", "count"],
+      additionalProperties: false,
+    },
+    annotations: { title: "Set a GTA 6 requirement count", ...WRITE_ANNOTATIONS },
+    write: true,
+    run: setCountTool,
   },
 ];
 
@@ -334,6 +580,19 @@ function initializeResult(params: unknown): unknown {
 
 function messageOf(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
+}
+
+function listResult(ctx: ServerContext): unknown {
+  const shown = TOOLS.filter((tool) => !tool.write || ctx.saveProgress !== undefined);
+
+  return {
+    tools: shown.map(({ name, description, inputSchema, annotations }) => ({
+      name,
+      description,
+      inputSchema,
+      annotations,
+    })),
+  };
 }
 
 function callTool(
@@ -391,17 +650,7 @@ export function handle(message: string, ctx: ServerContext): JsonRpcResponse | n
     case "ping":
       return { jsonrpc: "2.0", id, result: {} };
     case "tools/list":
-      return {
-        jsonrpc: "2.0",
-        id,
-        result: {
-          tools: TOOLS.map(({ name, description, inputSchema }) => ({
-            name,
-            description,
-            inputSchema,
-          })),
-        },
-      };
+      return { jsonrpc: "2.0", id, result: listResult(ctx) };
     case "tools/call":
       return callTool(id, parsed.params, ctx);
     default:
@@ -416,6 +665,13 @@ export function progressFile(
   const flag = argv.indexOf("--file");
   const given = flag === -1 ? undefined : argv[flag + 1];
   return given ?? env.GTA6_PROGRESS ?? DEFAULT_PROGRESS_FILE;
+}
+
+export function readOnlyMode(
+  argv: readonly string[],
+  env: Record<string, string | undefined>,
+): boolean {
+  return argv.includes(READ_ONLY_FLAG) || env.GTA6_READ_ONLY === "1";
 }
 
 export function readProgress(file: string): Progress {
@@ -443,19 +699,39 @@ export function readProgress(file: string): Progress {
   };
 }
 
+export function writeProgress(file: string, progress: Progress): void {
+  const temp = `${file}.tmp`;
+
+  try {
+    writeFileSync(temp, `${JSON.stringify(progress, null, 2)}\n`);
+    renameSync(temp, file);
+  } catch (error) {
+    rmSync(temp, { force: true });
+    throw new Error(`could not write ${file}: ${messageOf(error)}`);
+  }
+}
+
 export function createContext(
   argv: readonly string[],
   env: Record<string, string | undefined>,
 ): ServerContext {
   const file = progressFile(argv, env);
+  const data: ProgressData = {
+    chapters: loadChapters(),
+    missions: loadMissions(undefined, { includeOptional: true }),
+    requirements: loadRequirements(),
+  };
+
+  if (readOnlyMode(argv, env)) {
+    return { data, loadProgress: () => readProgress(file) };
+  }
 
   return {
-    data: {
-      chapters: loadChapters(),
-      missions: loadMissions(undefined, { includeOptional: true }),
-      requirements: loadRequirements(),
-    },
+    data,
     loadProgress: () => readProgress(file),
+    saveProgress: (progress) => {
+      writeProgress(file, progress);
+    },
   };
 }
 
