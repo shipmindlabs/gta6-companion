@@ -5,8 +5,8 @@
 Open data and a small TypeScript toolkit for tracking 100% completion in Grand
 Theft Auto VI: chapters, story missions, completion requirements and cheats.
 The data is meant to be readable by both people and machines, so the same
-entries can later be served to AI assistants through an MCP server and an Agent
-Skill.
+entries are also served to AI assistants through the MCP server in
+`src/mcp/server.ts`.
 
 ## Status
 
@@ -46,12 +46,14 @@ cheat facts are in the repository:
   request.
 - `src/cli.ts` - the `gta6` command: `left`, `status`, `done`, `undo`, `set`,
   `missions` and `search`.
+- `src/mcp/server.ts` - the `gta6-mcp` command: a Model Context Protocol server
+  over stdio with four read-only tools over the same progress file.
 - `src/index.ts` - public entry point.
 - `test/validate.test.ts`, `test/data.test.ts`, `test/progress.test.ts`,
-  `test/cheats.test.ts`, `test/search.test.ts` and `test/cli.test.ts` - tests,
-  run with `npm test` on Node >= 22.18.
+  `test/cheats.test.ts`, `test/search.test.ts`, `test/cli.test.ts` and
+  `test/mcp.test.ts` - tests, run with `npm test` on Node >= 22.18.
 
-The MCP server and the Agent Skill are not in the repository yet.
+The Agent Skill is not in the repository yet.
 
 ## Usage
 
@@ -127,6 +129,62 @@ one are printed as `Chapter 3, mission 7` unless `--spoilers` is passed.
 `run(argv, io)` in `src/cli.ts` returns `{code, out}` and takes every side
 effect through its `io` argument, so `test/cli.test.ts` drives the commands
 against an in-memory file map without spawning a process.
+
+## MCP server
+
+`src/mcp/server.ts` is the `gta6-mcp` command: a Model Context Protocol server
+over stdio, newline-delimited JSON-RPC 2.0, with no dependencies. It reads the
+same progress file as the CLI, so an assistant answers from the checklist you
+keep with `gta6 done` and `gta6 set`. It only reads: nothing in the server
+writes to the progress file.
+
+```json
+{
+  "mcpServers": {
+    "gta6-companion": {
+      "command": "npx",
+      "args": ["-y", "--package", "gta6-companion", "gta6-mcp"],
+      "env": { "GTA6_PROGRESS": "/home/you/gta6.json" }
+    }
+  }
+}
+```
+
+The progress file is picked the same way as in the CLI: `--file <path>` first,
+then `$GTA6_PROGRESS`, then `./gta6-progress.json`. A missing file counts as an
+empty progress document, so the first question already works.
+
+| Tool | Arguments | What it returns |
+| --- | --- | --- |
+| `gta6_whats_left` | `spoilers?` | the next story mission and every unmet requirement |
+| `gta6_status` | none | story and per-chapter progress, plus requirements met |
+| `gta6_mission` | `query`, `spoilers?` | up to five matching missions with position and state |
+| `gta6_requirements` | `onlyUnmet?` | requirements with `have`, `needed` and what is left |
+
+Each tool declares a JSON Schema `inputSchema` and answers with a single text
+content block. `gta6_mission` searches with `src/search.ts`, so one typo per
+word is tolerated.
+
+The server handles `initialize`, `notifications/initialized`, `ping`,
+`tools/list` and `tools/call`. The `protocolVersion` from `initialize` is echoed
+back when it is one the server knows (`2025-06-18`, `2025-03-26`,
+`2024-11-05`), otherwise the server answers with its own, `2025-06-18`.
+
+An unknown method is `-32601`, a missing tool name or a wrongly typed argument
+is `-32602`, and a line that is not valid JSON is `-32700`. A tool that cannot
+do its work - an unreadable progress file, a query that matches no mission -
+comes back as a normal result with `isError: true`, so the assistant can read
+what went wrong instead of stopping at the protocol layer.
+
+Mission titles are spoilers here too. `gta6_mission` prints only the position of
+a mission past the next unfinished one (`Chapter 3, mission 26, story mission 59
+of 91, not done, title withheld`) unless `spoilers: true` is passed, and
+`gta6_whats_left` names the missions after the next one only with the same flag.
+
+`handle(message, ctx)` is a pure function returning the response, or `null` for
+a notification, so `test/mcp.test.ts` drives the whole protocol without
+spawning a process. `main()` only wires stdin and stdout and writes nothing but
+protocol messages to stdout.
 
 ## Search
 
