@@ -58,7 +58,16 @@ const SUGGESTIONS = 5;
 const ID_WIDTH = 34;
 const TITLE_WIDTH = 20;
 const KIND_WIDTH = 11;
-const COMMANDS = ["left", "status", "done", "undo", "set", "missions", "search"];
+
+export const COMMANDS: readonly string[] = [
+  "left",
+  "status",
+  "done",
+  "undo",
+  "set",
+  "missions",
+  "search",
+];
 
 const USAGE = [
   "gta6 - track GTA 6 missions and 100% progress from a terminal",
