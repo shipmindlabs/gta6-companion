@@ -49,10 +49,12 @@ cheat facts are in the repository:
 - `src/mcp/server.ts` - the `gta6-mcp` command: a Model Context Protocol server
   over stdio with four read tools and three write tools over the same progress
   file, or read-only when started with `--read-only`.
+- `docs/mcp.md` - how to set the server up in Claude Code, Cursor and Codex.
 - `src/index.ts` - public entry point.
 - `test/validate.test.ts`, `test/data.test.ts`, `test/progress.test.ts`,
-  `test/cheats.test.ts`, `test/search.test.ts`, `test/cli.test.ts` and
-  `test/mcp.test.ts` - tests, run with `npm test` on Node >= 22.18.
+  `test/cheats.test.ts`, `test/search.test.ts`, `test/cli.test.ts`,
+  `test/mcp.test.ts` and `test/docs.test.ts` - tests, run with `npm test` on
+  Node >= 22.18.
 
 The Agent Skill is not in the repository yet.
 
@@ -130,6 +132,18 @@ one are printed as `Chapter 3, mission 7` unless `--spoilers` is passed.
 `run(argv, io)` in `src/cli.ts` returns `{code, out}` and takes every side
 effect through its `io` argument, so `test/cli.test.ts` drives the commands
 against an in-memory file map without spawning a process.
+
+## Use it with an AI assistant
+
+The MCP server answers from this repository and from the progress file you keep
+with `gta6 done` and `gta6 set`, so an assistant can handle "What do I have left
+for 100% in GTA 6?", "Which GTA 6 mission comes after Slam Dunk?" and "I just
+finished Moses, tick it off."
+
+[docs/mcp.md](docs/mcp.md) is the setup page: running the server from a clone
+with no install and no build step, the progress file and read-only settings, and
+ready-to-paste config snippets for Claude Code (`.mcp.json`), Cursor
+(`mcp.json`) and Codex (`config.toml`).
 
 ## MCP server
 
